@@ -2,24 +2,32 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
   <title>Math Fun for Kids!</title>
   <style>
-    * { box-sizing: border-box; margin: 0; padding: 0; }
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      -webkit-tap-highlight-color: transparent;
+      touch-action: manipulation;
+    }
 
     body {
       font-family: 'Comic Sans MS', 'Chalkboard SE', cursive;
       background: linear-gradient(135deg, #ff9a9e 0%, #fad0c4 50%, #ffecd2 100%);
       min-height: 100vh;
+      min-height: 100dvh;
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      padding: 20px;
+      padding: 16px;
+      overflow-x: hidden;
     }
 
     h1 {
-      font-size: 2.8rem;
+      font-size: clamp(1.8rem, 5vw, 2.8rem);
       color: #fff;
       text-shadow: 3px 3px 0 #e05a6f, -1px -1px 0 #e05a6f;
       margin-bottom: 10px;
@@ -28,14 +36,16 @@
 
     .score-bar {
       display: flex;
-      gap: 30px;
+      gap: 20px;
       background: rgba(255,255,255,0.85);
       border-radius: 50px;
-      padding: 10px 30px;
-      margin-bottom: 24px;
-      font-size: 1.2rem;
+      padding: 10px 24px;
+      margin-bottom: 16px;
+      font-size: clamp(1rem, 3vw, 1.2rem);
       color: #555;
       box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+      flex-wrap: wrap;
+      justify-content: center;
     }
 
     .score-bar span { font-weight: bold; color: #e05a6f; }
@@ -43,19 +53,20 @@
     .game-card {
       background: white;
       border-radius: 28px;
-      padding: 40px 50px;
+      padding: clamp(20px, 4vw, 40px) clamp(16px, 5vw, 50px);
       box-shadow: 0 8px 32px rgba(0,0,0,0.15);
       display: flex;
       flex-direction: column;
       align-items: center;
-      gap: 24px;
-      max-width: 460px;
+      gap: 18px;
+      max-width: 500px;
       width: 100%;
     }
 
     .emoji-mascot {
-      font-size: 5rem;
+      font-size: clamp(3.5rem, 10vw, 5rem);
       animation: bounce 1.5s infinite;
+      line-height: 1;
     }
 
     @keyframes bounce {
@@ -64,10 +75,11 @@
     }
 
     .question {
-      font-size: 2.8rem;
+      font-size: clamp(2.2rem, 7vw, 3rem);
       color: #333;
       text-align: center;
-      min-height: 60px;
+      min-height: 56px;
+      line-height: 1.2;
     }
 
     .answers {
@@ -79,15 +91,22 @@
 
     .answer-btn {
       font-family: inherit;
-      font-size: 2rem;
-      padding: 18px 10px;
+      font-size: clamp(1.6rem, 5vw, 2.2rem);
+      /* min 60px height — easy tap target on Fire */
+      min-height: 72px;
+      padding: 12px 10px;
       border: none;
       border-radius: 18px;
       cursor: pointer;
-      transition: transform 0.1s, box-shadow 0.1s;
-      box-shadow: 0 4px 0 rgba(0,0,0,0.15);
+      box-shadow: 0 5px 0 rgba(0,0,0,0.18);
       font-weight: bold;
       color: white;
+      /* disable slow 300ms tap delay on older Silk versions */
+      touch-action: manipulation;
+      transition: transform 0.08s, box-shadow 0.08s;
+      /* prevent text selection on long-press */
+      user-select: none;
+      -webkit-user-select: none;
     }
 
     .answer-btn:nth-child(1) { background: #f8a5c2; }
@@ -95,34 +114,38 @@
     .answer-btn:nth-child(3) { background: #74b9ff; }
     .answer-btn:nth-child(4) { background: #fdcb6e; }
 
-    .answer-btn:hover { transform: translateY(-3px); box-shadow: 0 7px 0 rgba(0,0,0,0.15); }
-    .answer-btn:active { transform: translateY(2px); box-shadow: 0 2px 0 rgba(0,0,0,0.15); }
+    /* Only apply hover effects on non-touch devices */
+    @media (hover: hover) {
+      .answer-btn:hover { transform: translateY(-3px); box-shadow: 0 8px 0 rgba(0,0,0,0.18); }
+    }
+
+    .answer-btn:active { transform: translateY(3px); box-shadow: 0 2px 0 rgba(0,0,0,0.18); }
 
     .answer-btn.correct {
       background: #00b894 !important;
-      animation: pop 0.4s ease;
+      animation: pop 0.35s ease forwards;
     }
 
     .answer-btn.wrong {
       background: #d63031 !important;
-      animation: shake 0.4s ease;
+      animation: shake 0.35s ease forwards;
     }
 
     @keyframes pop {
       0% { transform: scale(1); }
-      50% { transform: scale(1.2); }
+      50% { transform: scale(1.15); }
       100% { transform: scale(1); }
     }
 
     @keyframes shake {
       0%, 100% { transform: translateX(0); }
-      25% { transform: translateX(-8px); }
-      75% { transform: translateX(8px); }
+      25% { transform: translateX(-10px); }
+      75% { transform: translateX(10px); }
     }
 
     .feedback {
-      font-size: 1.6rem;
-      min-height: 40px;
+      font-size: clamp(1.3rem, 4vw, 1.6rem);
+      min-height: 36px;
       text-align: center;
       font-weight: bold;
     }
@@ -132,33 +155,37 @@
 
     .level-select {
       display: flex;
-      gap: 10px;
+      gap: 8px;
       flex-wrap: wrap;
       justify-content: center;
     }
 
     .level-btn {
       font-family: inherit;
-      font-size: 1rem;
-      padding: 8px 20px;
+      font-size: clamp(0.9rem, 2.5vw, 1rem);
+      padding: 10px 18px;
+      min-height: 44px;
       border: 3px solid #e05a6f;
       border-radius: 50px;
       background: white;
       color: #e05a6f;
       cursor: pointer;
       font-weight: bold;
-      transition: all 0.15s;
+      touch-action: manipulation;
+      user-select: none;
+      -webkit-user-select: none;
     }
 
-    .level-btn.active, .level-btn:hover {
+    .level-btn.active {
       background: #e05a6f;
       color: white;
     }
 
     .stars {
-      font-size: 2rem;
-      letter-spacing: 4px;
-      min-height: 40px;
+      font-size: clamp(1.5rem, 4vw, 2rem);
+      letter-spacing: 2px;
+      min-height: 36px;
+      text-align: center;
     }
   </style>
 </head>
@@ -176,9 +203,9 @@
     <div class="emoji-mascot" id="mascot">🐱</div>
 
     <div class="level-select">
-      <button class="level-btn active" onclick="setLevel('easy')">Easy (+, –)</button>
-      <button class="level-btn" onclick="setLevel('medium')">Medium (×)</button>
-      <button class="level-btn" onclick="setLevel('hard')">Hard (÷)</button>
+      <button class="level-btn active" id="btn-easy">Easy (+, −)</button>
+      <button class="level-btn" id="btn-medium">Medium (×)</button>
+      <button class="level-btn" id="btn-hard">Hard (÷)</button>
     </div>
 
     <div class="question" id="question">Loading...</div>
@@ -198,10 +225,14 @@
     let level = 'easy';
     let locked = false;
 
+    document.getElementById('btn-easy').addEventListener('click', () => setLevel('easy'));
+    document.getElementById('btn-medium').addEventListener('click', () => setLevel('medium'));
+    document.getElementById('btn-hard').addEventListener('click', () => setLevel('hard'));
+
     function setLevel(l) {
       level = l;
       document.querySelectorAll('.level-btn').forEach(b => b.classList.remove('active'));
-      event.target.classList.add('active');
+      document.getElementById('btn-' + l).classList.add('active');
       document.getElementById('level-label').textContent =
         l === 'easy' ? 'Easy' : l === 'medium' ? 'Medium' : 'Hard';
       newQuestion();
@@ -219,7 +250,6 @@
         a = rand(1, 10);
         b = rand(1, 10);
         if (op === '−') {
-          // keep answer positive
           if (a < b) [a, b] = [b, a];
           answer = a - b;
         } else {
@@ -254,7 +284,6 @@
       document.getElementById('feedback').textContent = '';
       document.getElementById('feedback').className = 'feedback';
 
-      // Change mascot occasionally
       if (Math.random() < 0.3) {
         document.getElementById('mascot').textContent =
           mascots[rand(0, mascots.length - 1)];
@@ -264,7 +293,6 @@
       correctAnswer = answer;
       document.getElementById('question').textContent = questionText;
 
-      // Generate 3 wrong answers
       const wrong = new Set();
       while (wrong.size < 3) {
         const w = answer + rand(-5, 5);
@@ -279,7 +307,7 @@
         const btn = document.createElement('button');
         btn.className = 'answer-btn';
         btn.textContent = choice;
-        btn.onclick = () => handleAnswer(btn, choice);
+        btn.addEventListener('click', () => handleAnswer(btn, choice));
         container.appendChild(btn);
       });
     }
@@ -309,7 +337,6 @@
         streak = 0;
         document.getElementById('streak').textContent = 0;
 
-        // Show the correct answer
         allBtns.forEach(b => {
           if (parseInt(b.textContent) === correctAnswer) b.classList.add('correct');
         });
