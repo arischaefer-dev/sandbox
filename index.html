@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="manifest" href="/manifest.json" />
+  <meta name="theme-color" content="#e05a6f" />
+  <title>Math Fun for Kids!</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Comic Sans MS', 'Chalkboard SE', cursive;
+      background: linear-gradient(135deg, #ff9a9e 0%, #fad0c4 50%, #ffecd2 100%);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+
+    h1 {
+      font-size: 2.8rem;
+      color: #fff;
+      text-shadow: 3px 3px 0 #e05a6f, -1px -1px 0 #e05a6f;
+      margin-bottom: 10px;
+      text-align: center;
+    }
+
+    .score-bar {
+      display: flex;
+      gap: 30px;
+      background: rgba(255,255,255,0.85);
+      border-radius: 50px;
+      padding: 10px 30px;
+      margin-bottom: 24px;
+      font-size: 1.2rem;
+      color: #555;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    }
+
+    .score-bar span { font-weight: bold; color: #e05a6f; }
+
+    .game-card {
+      background: white;
+      border-radius: 28px;
+      padding: 40px 50px;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.15);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 24px;
+      max-width: 460px;
+      width: 100%;
+    }
+
+    .emoji-mascot {
+      font-size: 5rem;
+      animation: bounce 1.5s infinite;
+    }
+
+    @keyframes bounce {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-12px); }
+    }
+
+    .question {
+      font-size: 2.8rem;
+      color: #333;
+      text-align: center;
+      min-height: 60px;
+    }
+
+    .answers {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+      width: 100%;
+    }
+
+    .answer-btn {
+      font-family: inherit;
+      font-size: 2rem;
+      padding: 18px 10px;
+      border: none;
+      border-radius: 18px;
+      cursor: pointer;
+      transition: transform 0.1s, box-shadow 0.1s;
+      box-shadow: 0 4px 0 rgba(0,0,0,0.15);
+      font-weight: bold;
+      color: white;
+    }
+
+    .answer-btn:nth-child(1) { background: #f8a5c2; }
+    .answer-btn:nth-child(2) { background: #78e08f; }
+    .answer-btn:nth-child(3) { background: #74b9ff; }
+    .answer-btn:nth-child(4) { background: #fdcb6e; }
+
+    .answer-btn:hover { transform: translateY(-3px); box-shadow: 0 7px 0 rgba(0,0,0,0.15); }
+    .answer-btn:active { transform: translateY(2px); box-shadow: 0 2px 0 rgba(0,0,0,0.15); }
+
+    .answer-btn.correct {
+      background: #00b894 !important;
+      animation: pop 0.4s ease;
+    }
+
+    .answer-btn.wrong {
+      background: #d63031 !important;
+      animation: shake 0.4s ease;
+    }
+
+    @keyframes pop {
+      0% { transform: scale(1); }
+      50% { transform: scale(1.2); }
+      100% { transform: scale(1); }
+    }
+
+    @keyframes shake {
+      0%, 100% { transform: translateX(0); }
+      25% { transform: translateX(-8px); }
+      75% { transform: translateX(8px); }
+    }
+
+    .feedback {
+      font-size: 1.6rem;
+      min-height: 40px;
+      text-align: center;
+      font-weight: bold;
+    }
+
+    .feedback.correct { color: #00b894; }
+    .feedback.wrong   { color: #d63031; }
+
+    .level-select {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+
+    .level-btn {
+      font-family: inherit;
+      font-size: 1rem;
+      padding: 8px 20px;
+      border: 3px solid #e05a6f;
+      border-radius: 50px;
+      background: white;
+      color: #e05a6f;
+      cursor: pointer;
+      font-weight: bold;
+      transition: all 0.15s;
+    }
+
+    .level-btn.active, .level-btn:hover {
+      background: #e05a6f;
+      color: white;
+    }
+
+    .stars {
+      font-size: 2rem;
+      letter-spacing: 4px;
+      min-height: 40px;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>Math Fun! 🌟</h1>
+
+  <div class="score-bar">
+    <div>Score: <span id="score">0</span></div>
+    <div>Streak: <span id="streak">0</span> 🔥</div>
+    <div>Level: <span id="level-label">Easy</span></div>
+  </div>
+
+  <div class="game-card">
+    <div class="emoji-mascot" id="mascot">🐱</div>
+
+    <div class="level-select">
+      <button class="level-btn active" onclick="setLevel('easy')">Easy (+, –)</button>
+      <button class="level-btn" onclick="setLevel('medium')">Medium (×)</button>
+      <button class="level-btn" onclick="setLevel('hard')">Hard (÷)</button>
+    </div>
+
+    <div class="question" id="question">Loading...</div>
+
+    <div class="answers" id="answers"></div>
+
+    <div class="feedback" id="feedback"></div>
+
+    <div class="stars" id="stars"></div>
+  </div>
+
+  <script>
+    const mascots = ['🐱', '🐶', '🐸', '🦊', '🐼', '🐨', '🦁', '🐯', '🐮', '🐰'];
+    let score = 0;
+    let streak = 0;
+    let correctAnswer = 0;
+    let level = 'easy';
+    let locked = false;
+
+    function setLevel(l) {
+      level = l;
+      document.querySelectorAll('.level-btn').forEach(b => b.classList.remove('active'));
+      event.target.classList.add('active');
+      document.getElementById('level-label').textContent =
+        l === 'easy' ? 'Easy' : l === 'medium' ? 'Medium' : 'Hard';
+      newQuestion();
+    }
+
+    function rand(min, max) {
+      return Math.floor(Math.random() * (max - min + 1)) + min;
+    }
+
+    function generateQuestion() {
+      let a, b, op, answer, questionText;
+
+      if (level === 'easy') {
+        op = Math.random() < 0.5 ? '+' : '−';
+        a = rand(1, 10);
+        b = rand(1, 10);
+        if (op === '−') {
+          // keep answer positive
+          if (a < b) [a, b] = [b, a];
+          answer = a - b;
+        } else {
+          answer = a + b;
+        }
+        questionText = `${a} ${op} ${b} = ?`;
+      } else if (level === 'medium') {
+        a = rand(2, 10);
+        b = rand(2, 10);
+        answer = a * b;
+        questionText = `${a} × ${b} = ?`;
+      } else {
+        b = rand(2, 10);
+        answer = rand(2, 10);
+        a = b * answer;
+        questionText = `${a} ÷ ${b} = ?`;
+      }
+
+      return { questionText, answer };
+    }
+
+    function shuffle(arr) {
+      for (let i = arr.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [arr[i], arr[j]] = [arr[j], arr[i]];
+      }
+      return arr;
+    }
+
+    function newQuestion() {
+      locked = false;
+      document.getElementById('feedback').textContent = '';
+      document.getElementById('feedback').className = 'feedback';
+
+      // Change mascot occasionally
+      if (Math.random() < 0.3) {
+        document.getElementById('mascot').textContent =
+          mascots[rand(0, mascots.length - 1)];
+      }
+
+      const { questionText, answer } = generateQuestion();
+      correctAnswer = answer;
+      document.getElementById('question').textContent = questionText;
+
+      // Generate 3 wrong answers
+      const wrong = new Set();
+      while (wrong.size < 3) {
+        const w = answer + rand(-5, 5);
+        if (w !== answer && w >= 0) wrong.add(w);
+      }
+
+      const choices = shuffle([answer, ...wrong]);
+      const container = document.getElementById('answers');
+      container.innerHTML = '';
+
+      choices.forEach(choice => {
+        const btn = document.createElement('button');
+        btn.className = 'answer-btn';
+        btn.textContent = choice;
+        btn.onclick = () => handleAnswer(btn, choice);
+        container.appendChild(btn);
+      });
+    }
+
+    function handleAnswer(btn, choice) {
+      if (locked) return;
+      locked = true;
+
+      const allBtns = document.querySelectorAll('.answer-btn');
+
+      if (choice === correctAnswer) {
+        btn.classList.add('correct');
+        score += level === 'easy' ? 10 : level === 'medium' ? 20 : 30;
+        streak++;
+        document.getElementById('score').textContent = score;
+        document.getElementById('streak').textContent = streak;
+
+        const praise = ['Amazing! 🎉', 'Super! ⭐', 'You rock! 🚀', 'Wow! 🌈', 'Brilliant! 💡', 'Perfect! 🏆'];
+        const fb = document.getElementById('feedback');
+        fb.textContent = praise[rand(0, praise.length - 1)];
+        fb.className = 'feedback correct';
+
+        updateStars();
+        setTimeout(newQuestion, 1200);
+      } else {
+        btn.classList.add('wrong');
+        streak = 0;
+        document.getElementById('streak').textContent = 0;
+
+        // Show the correct answer
+        allBtns.forEach(b => {
+          if (parseInt(b.textContent) === correctAnswer) b.classList.add('correct');
+        });
+
+        const fb = document.getElementById('feedback');
+        fb.textContent = `The answer is ${correctAnswer}! Try again! 💪`;
+        fb.className = 'feedback wrong';
+
+        setTimeout(newQuestion, 1800);
+      }
+    }
+
+    function updateStars() {
+      const starsDiv = document.getElementById('stars');
+      const count = Math.min(Math.floor(score / 50), 10);
+      starsDiv.textContent = '⭐'.repeat(count);
+    }
+
+    newQuestion();
+
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('/sw.js');
+    }
+  </script>
+</body>
+</html>
