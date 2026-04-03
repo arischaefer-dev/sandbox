@@ -1,0 +1,17 @@
+{
+  "name": "grade-1-learning-arcade",
+  "version": "1.0.0",
+  "description": "Grade 1 browser learning arcade with math and logic mini-games.",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "keywords": [
+    "kids",
+    "grade1",
+    "math",
+    "education",
+    "railway"
+  ],
+  "license": "MIT"
+}
