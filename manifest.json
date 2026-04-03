@@ -1,0 +1,16 @@
+{
+  "name": "Math Fun for Kids!",
+  "short_name": "Math Fun",
+  "start_url": "/index.html",
+  "display": "standalone",
+  "background_color": "#fad0c4",
+  "theme_color": "#e05a6f",
+  "description": "A colorful math game for 6-year-olds",
+  "icons": [
+    {
+      "src": "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='80' font-size='80'>🌟</text></svg>",
+      "sizes": "any",
+      "type": "image/svg+xml"
+    }
+  ]
+}
