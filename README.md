@@ -11,6 +11,19 @@ A browser-based learning app for 6-year-olds (Grade 1), with colorful mini-games
 - Venn diagrams
 - Number patterns (extra age-appropriate game)
 
+## Login and progress tracking
+
+- Child profile login by name (saved in browser localStorage)
+- Separate progress per profile
+- Tracks:
+  - total score
+  - current streak
+  - best streak
+  - stars earned
+  - correct/wrong answer counts
+  - attempts and best score for each mini-game
+- Profile switcher and logout/reset controls
+
 ## Run locally
 
 Requirements: Node.js 20+

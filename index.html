@@ -51,9 +51,37 @@
       box-shadow: 0 10px 22px rgba(143, 92, 255, 0.25);
     }
 
+    .auth-row {
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+
+    .auth-pill {
+      background: var(--card);
+      border-radius: 999px;
+      padding: 10px 14px;
+      box-shadow: 0 6px 16px rgba(0, 0, 0, 0.08);
+      border: 2px solid #ffffff;
+      font-weight: 700;
+    }
+
+    .switch-btn {
+      border: none;
+      border-radius: 999px;
+      padding: 9px 14px;
+      background: #ffffff;
+      color: #6d28d9;
+      font-weight: 800;
+      cursor: pointer;
+      box-shadow: 0 4px 0 rgba(0, 0, 0, 0.12);
+    }
+
     .stats {
       display: grid;
-      grid-template-columns: repeat(4, minmax(0, 1fr));
+      grid-template-columns: repeat(6, minmax(0, 1fr));
       gap: 10px;
     }
 
@@ -84,6 +112,67 @@
       flex-wrap: wrap;
       gap: 8px;
       justify-content: center;
+    }
+
+    .progress-card {
+      background: var(--card);
+      border-radius: 16px;
+      padding: 12px;
+      box-shadow: 0 8px 18px rgba(0, 0, 0, 0.1);
+      display: grid;
+      gap: 10px;
+    }
+
+    .progress-title {
+      font-size: 1.15rem;
+      font-weight: 800;
+      color: #4c1d95;
+      text-align: center;
+    }
+
+    .progress-summary {
+      text-align: center;
+      font-weight: 700;
+      color: #4b5563;
+    }
+
+    .progress-list {
+      display: grid;
+      gap: 8px;
+    }
+
+    .progress-item {
+      display: grid;
+      grid-template-columns: 130px 1fr 62px;
+      gap: 8px;
+      align-items: center;
+      font-size: 0.9rem;
+      font-weight: 700;
+      color: #334155;
+    }
+
+    .progress-item-label {
+      text-align: left;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .progress-bar {
+      background: #e5e7eb;
+      border-radius: 999px;
+      overflow: hidden;
+      height: 12px;
+    }
+
+    .progress-fill {
+      height: 100%;
+      border-radius: 999px;
+      background: linear-gradient(135deg, #60a5fa, #8b5cf6);
+    }
+
+    .progress-item-value {
+      text-align: right;
     }
 
     .game-btn {
@@ -294,13 +383,121 @@
       font-size: 0.9rem;
     }
 
+    .login-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(17, 24, 39, 0.45);
+      display: grid;
+      place-items: center;
+      z-index: 50;
+      padding: 16px;
+    }
+
+    .hidden {
+      display: none !important;
+    }
+
+    .login-card {
+      width: min(450px, 100%);
+      background: #ffffff;
+      border-radius: 18px;
+      box-shadow: 0 18px 40px rgba(0, 0, 0, 0.22);
+      padding: 18px;
+      display: grid;
+      gap: 12px;
+      text-align: center;
+    }
+
+    .login-card h2 {
+      color: #7c3aed;
+      font-size: 1.45rem;
+    }
+
+    .login-card p {
+      color: #4b5563;
+      font-size: 0.95rem;
+    }
+
+    .login-form {
+      display: flex;
+      gap: 8px;
+    }
+
+    .login-input {
+      flex: 1;
+      border-radius: 10px;
+      border: 2px solid #d1d5db;
+      padding: 10px;
+      font-size: 1rem;
+      font-weight: 700;
+    }
+
+    .login-submit {
+      border: none;
+      border-radius: 10px;
+      background: linear-gradient(135deg, #ec4899, #8b5cf6);
+      color: #ffffff;
+      font-weight: 800;
+      padding: 10px 14px;
+      cursor: pointer;
+    }
+
+    .login-error {
+      min-height: 18px;
+      color: #dc2626;
+      font-size: 0.85rem;
+      font-weight: 700;
+    }
+
+    .profile-buttons {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 6px;
+    }
+
+    .profile-btn {
+      border: 2px solid #ddd6fe;
+      border-radius: 999px;
+      background: #f5f3ff;
+      color: #5b21b6;
+      font-weight: 700;
+      padding: 6px 10px;
+      cursor: pointer;
+    }
+
+    .profile-empty {
+      color: #6b7280;
+      font-size: 0.85rem;
+    }
+
     @media (max-width: 700px) {
       .stats {
-        grid-template-columns: repeat(2, minmax(0, 1fr));
+        grid-template-columns: repeat(3, minmax(0, 1fr));
       }
 
       .options {
         grid-template-columns: 1fr;
+      }
+
+      .progress-item {
+        grid-template-columns: 1fr;
+        gap: 4px;
+      }
+
+      .progress-item-label,
+      .progress-item-value {
+        text-align: center;
+      }
+
+      .login-form {
+        flex-direction: column;
+      }
+    }
+
+    @media (max-width: 500px) {
+      .stats {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
       }
     }
   </style>
@@ -343,13 +540,18 @@
       "Super thinking!"
     ];
 
+    const PROFILE_STORAGE_KEY = "grade1_arcade_profiles_v1";
+
     const state = {
       gameKey: "addition",
       score: 0,
       streak: 0,
+      bestStreak: 0,
       locked: false,
       timerId: null,
-      currentQuestion: null
+      currentQuestion: null,
+      profiles: {},
+      currentProfileName: null
     };
 
     function randInt(min, max) {
@@ -564,6 +766,147 @@
       patterns: { name: "Number Patterns", short: "Patterns", run: gamePatterns }
     };
 
+    function defaultProgress() {
+      const perGame = {};
+      Object.keys(games).forEach((key) => {
+        perGame[key] = { attempted: 0, correct: 0 };
+      });
+      return {
+        score: 0,
+        streak: 0,
+        bestStreak: 0,
+        stars: 0,
+        answered: 0,
+        correct: 0,
+        perGame
+      };
+    }
+
+    function normalizeProfile(raw) {
+      const base = defaultProgress();
+      if (!raw || typeof raw !== "object") return base;
+
+      const merged = {
+        ...base,
+        score: Number.isFinite(raw.score) ? raw.score : base.score,
+        streak: Number.isFinite(raw.streak) ? raw.streak : base.streak,
+        bestStreak: Number.isFinite(raw.bestStreak) ? raw.bestStreak : base.bestStreak,
+        stars: Number.isFinite(raw.stars) ? raw.stars : base.stars,
+        answered: Number.isFinite(raw.answered) ? raw.answered : base.answered,
+        correct: Number.isFinite(raw.correct) ? raw.correct : base.correct,
+        perGame: { ...base.perGame }
+      };
+
+      if (raw.perGame && typeof raw.perGame === "object") {
+        Object.keys(base.perGame).forEach((key) => {
+          const source = raw.perGame[key] || {};
+          merged.perGame[key] = {
+            attempted: Number.isFinite(source.attempted) ? source.attempted : 0,
+            correct: Number.isFinite(source.correct) ? source.correct : 0
+          };
+        });
+      }
+
+      return merged;
+    }
+
+    function loadProfiles() {
+      try {
+        const saved = localStorage.getItem(PROFILE_STORAGE_KEY);
+        if (!saved) return {};
+        const parsed = JSON.parse(saved);
+        if (!parsed || typeof parsed !== "object") return {};
+        const result = {};
+        Object.entries(parsed).forEach(([name, progress]) => {
+          result[name] = normalizeProfile(progress);
+        });
+        return result;
+      } catch {
+        return {};
+      }
+    }
+
+    function saveProfiles() {
+      localStorage.setItem(PROFILE_STORAGE_KEY, JSON.stringify(state.profiles));
+    }
+
+    function setProfileList() {
+      const list = document.getElementById("profile-list");
+      list.innerHTML = "";
+      Object.keys(state.profiles).sort().forEach((name) => {
+        const option = document.createElement("option");
+        option.value = name;
+        list.appendChild(option);
+      });
+    }
+
+    function profileCardText(progress) {
+      const accuracy = progress.answered === 0
+        ? 0
+        : Math.round((progress.correct / progress.answered) * 100);
+      return `Questions: ${progress.answered} | Accuracy: ${accuracy}%`;
+    }
+
+    function setProfileMessage(text, kind = "ok") {
+      const message = document.getElementById("profile-message");
+      message.textContent = text;
+      message.className = `profile-message ${kind}`;
+    }
+
+    function hydrateStateFromProfile(name) {
+      const progress = state.profiles[name];
+      if (!progress) return;
+      state.currentProfileName = name;
+      state.score = progress.score;
+      state.streak = progress.streak;
+      state.bestStreak = progress.bestStreak;
+      document.getElementById("current-player").textContent = name;
+      document.getElementById("profile-summary").textContent = profileCardText(progress);
+      document.getElementById("name-input").value = name;
+      document.getElementById("name-input").setCustomValidity("");
+    }
+
+    function ensureCurrentProgress() {
+      if (!state.currentProfileName) return null;
+      if (!state.profiles[state.currentProfileName]) {
+        state.profiles[state.currentProfileName] = defaultProgress();
+      }
+      return state.profiles[state.currentProfileName];
+    }
+
+    function submitProfile() {
+      const input = document.getElementById("name-input");
+      const raw = input.value.trim();
+      if (raw.length < 2) {
+        input.setCustomValidity("Name must be at least 2 letters.");
+        input.reportValidity();
+        return;
+      }
+      input.setCustomValidity("");
+
+      const normalized = raw.replace(/\s+/g, " ").slice(0, 20);
+      if (!state.profiles[normalized]) {
+        state.profiles[normalized] = defaultProgress();
+      }
+      hydrateStateFromProfile(normalized);
+      saveProfiles();
+      setProfileList();
+      setProfileMessage(`Welcome, ${normalized}! Your progress is ready.`);
+      updateStats();
+      nextQuestion();
+    }
+
+    function resetProgress() {
+      if (!state.currentProfileName) return;
+      const name = state.currentProfileName;
+      state.profiles[name] = defaultProgress();
+      hydrateStateFromProfile(name);
+      saveProfiles();
+      setProfileMessage("Progress reset for this player.", "warn");
+      updateStats();
+      nextQuestion();
+    }
+
     function renderPicker() {
       const holder = document.getElementById("game-picker");
       holder.innerHTML = "";
@@ -594,6 +937,7 @@
       const game = games[key];
       document.getElementById("game-name").textContent = game.name;
       document.getElementById("game-short").textContent = game.short;
+      if (!state.currentProfileName) return;
       nextQuestion();
     }
 
@@ -601,9 +945,11 @@
       document.getElementById("score").textContent = state.score;
       document.getElementById("streak").textContent = state.streak;
       document.getElementById("stars").textContent = Math.floor(state.score / 50);
+      document.getElementById("best-streak").textContent = state.bestStreak;
     }
 
     function nextQuestion() {
+      if (!state.currentProfileName) return;
       state.locked = false;
       state.currentQuestion = games[state.gameKey].run();
 
@@ -628,6 +974,8 @@
     function submitAnswer(index) {
       if (state.locked || !state.currentQuestion) return;
       state.locked = true;
+      const progress = ensureCurrentProgress();
+      if (!progress) return;
 
       if (state.timerId) {
         clearTimeout(state.timerId);
@@ -645,10 +993,21 @@
       if (isCorrect) {
         state.score += state.currentQuestion.points;
         state.streak += 1;
+        state.bestStreak = Math.max(state.bestStreak, state.streak);
+        progress.correct += 1;
+        progress.perGame[state.gameKey].correct += 1;
         buttons[index].classList.add("correct");
         feedback.textContent = cheers[randInt(0, cheers.length - 1)];
         feedback.className = "feedback ok";
+        progress.score = state.score;
+        progress.streak = state.streak;
+        progress.bestStreak = state.bestStreak;
+        progress.answered += 1;
+        progress.perGame[state.gameKey].attempted += 1;
+        progress.stars = Math.floor(state.score / 50);
         updateStats();
+        document.getElementById("profile-summary").textContent = profileCardText(progress);
+        saveProfiles();
         state.timerId = setTimeout(nextQuestion, 1000);
       } else {
         state.streak = 0;
@@ -657,14 +1016,40 @@
         const rightAnswer = state.currentQuestion.options[state.currentQuestion.correctIndex];
         feedback.textContent = `Good try. The answer was ${rightAnswer}.`;
         feedback.className = "feedback nope";
+        progress.score = state.score;
+        progress.streak = 0;
+        progress.bestStreak = state.bestStreak;
+        progress.answered += 1;
+        progress.perGame[state.gameKey].attempted += 1;
+        progress.stars = Math.floor(state.score / 50);
         updateStats();
+        document.getElementById("profile-summary").textContent = profileCardText(progress);
+        saveProfiles();
         state.timerId = setTimeout(nextQuestion, 1600);
       }
     }
 
+    function initLogin() {
+      state.profiles = loadProfiles();
+      setProfileList();
+      const allNames = Object.keys(state.profiles).sort();
+      if (allNames.length > 0) {
+        hydrateStateFromProfile(allNames[0]);
+        setProfileMessage("Pick your name and press Start.");
+      } else {
+        setProfileMessage("Create a player name to begin.");
+      }
+
+      document.getElementById("start-btn").addEventListener("click", submitProfile);
+      document.getElementById("name-input").addEventListener("keydown", (event) => {
+        if (event.key === "Enter") submitProfile();
+      });
+      document.getElementById("reset-btn").addEventListener("click", resetProgress);
+    }
+
     renderPicker();
+    initLogin();
     updateStats();
-    setGame("addition");
   </script>
 </body>
 </html>
