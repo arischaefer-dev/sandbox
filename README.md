@@ -1,21 +1,59 @@
-# Math Fun for Kids! 🌟
+# Grade 1 Learning Arcade
 
-A colorful, browser-based math game designed for 6-year-olds. No installation needed — just open `index.html` in any browser!
+A browser-based learning app for 6-year-olds (Grade 1), with colorful mini-games and instant feedback.
 
-## How to Play
+## Included games
 
-1. Open `index.html` in your web browser
-2. Pick a difficulty level:
-   - **Easy** — addition and subtraction (numbers 1–10)
-   - **Medium** — multiplication tables (2–10)
-   - **Hard** — division (no remainders)
-3. Tap the correct answer from the 4 choices
-4. Earn points and build your streak!
+- Simple addition
+- Simple multiplication
+- Simple division
+- Pathway problems
+- Venn diagrams
+- Number patterns (extra age-appropriate game)
 
-## Features
+## Login and progress tracking
 
-- Big, colorful buttons — easy for little fingers
-- Animated mascot animals that change as you play
-- Instant feedback with praise messages
-- Score tracker + streak counter + star rewards
-- Three difficulty levels to grow with your child
+- Child profile login by name (saved in browser localStorage)
+- Separate progress per profile
+- Tracks:
+  - total score
+  - current streak
+  - best streak
+  - stars earned
+  - correct/wrong answer counts
+  - attempts and best score for each mini-game
+- Profile switcher and logout/reset controls
+
+## Run locally
+
+Requirements: Node.js 20+
+
+```bash
+npm install
+npm start
+```
+
+Open `http://localhost:3000`.
+
+## Deploy to Railway
+
+This repo is ready for Railway as a Node web service:
+
+- `server.js` serves static files
+- Uses Railway's `PORT` environment variable
+- `nixpacks.toml` defines build/start
+
+### Option 1: GitHub connected deploy
+
+1. Push this branch to GitHub.
+2. In Railway, create a new project from the GitHub repo.
+3. Railway will detect Node and deploy automatically.
+
+### Option 2: Railway CLI deploy
+
+```bash
+npm install -g @railway/cli
+railway login
+railway init
+railway up
+```

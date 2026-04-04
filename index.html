@@ -3,338 +3,1053 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <link rel="manifest" href="/manifest.json" />
-  <meta name="theme-color" content="#e05a6f" />
-  <title>Math Fun for Kids!</title>
+  <title>Grade 1 Learning Arcade</title>
   <style>
-    * { box-sizing: border-box; margin: 0; padding: 0; }
-
-    body {
-      font-family: 'Comic Sans MS', 'Chalkboard SE', cursive;
-      background: linear-gradient(135deg, #ff9a9e 0%, #fad0c4 50%, #ffecd2 100%);
-      min-height: 100vh;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      padding: 20px;
+    :root {
+      --pink: #ff6f91;
+      --purple: #8f5cff;
+      --blue: #45aaf2;
+      --green: #2ecc71;
+      --yellow: #f9ca24;
+      --orange: #ff9f43;
+      --ink: #2f3640;
+      --card: rgba(255, 255, 255, 0.95);
     }
 
-    h1 {
-      font-size: 2.8rem;
-      color: #fff;
-      text-shadow: 3px 3px 0 #e05a6f, -1px -1px 0 #e05a6f;
-      margin-bottom: 10px;
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: "Comic Sans MS", "Trebuchet MS", Arial, sans-serif;
+      color: var(--ink);
+      background:
+        radial-gradient(circle at 20% 20%, #ffd3e0, transparent 35%),
+        radial-gradient(circle at 80% 20%, #d6e6ff, transparent 35%),
+        linear-gradient(150deg, #fff7ea 0%, #fff3f7 45%, #eef7ff 100%);
+      min-height: 100vh;
+      padding: 18px;
+    }
+
+    .app {
+      max-width: 900px;
+      margin: 0 auto;
+      display: grid;
+      gap: 14px;
+    }
+
+    .title {
+      text-align: center;
+      font-size: clamp(1.8rem, 3vw, 2.6rem);
+      color: #ffffff;
+      text-shadow: 2px 2px 0 #ff5c8a, -1px -1px 0 #ff5c8a;
+      background: linear-gradient(135deg, #ff8fab, #b388ff);
+      border-radius: 20px;
+      padding: 14px;
+      box-shadow: 0 10px 22px rgba(143, 92, 255, 0.25);
+    }
+
+    .auth-row {
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+
+    .auth-pill {
+      background: var(--card);
+      border-radius: 999px;
+      padding: 10px 14px;
+      box-shadow: 0 6px 16px rgba(0, 0, 0, 0.08);
+      border: 2px solid #ffffff;
+      font-weight: 700;
+    }
+
+    .switch-btn {
+      border: none;
+      border-radius: 999px;
+      padding: 9px 14px;
+      background: #ffffff;
+      color: #6d28d9;
+      font-weight: 800;
+      cursor: pointer;
+      box-shadow: 0 4px 0 rgba(0, 0, 0, 0.12);
+    }
+
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(6, minmax(0, 1fr));
+      gap: 10px;
+    }
+
+    .stat {
+      background: var(--card);
+      border-radius: 14px;
+      padding: 10px;
+      text-align: center;
+      box-shadow: 0 6px 16px rgba(0, 0, 0, 0.08);
+      border: 2px solid #ffffff;
+      font-size: 1rem;
+      min-height: 74px;
+      display: grid;
+      place-items: center;
+    }
+
+    .stat strong {
+      font-size: 1.35rem;
+      color: var(--purple);
+    }
+
+    .games {
+      background: var(--card);
+      border-radius: 16px;
+      padding: 12px;
+      box-shadow: 0 8px 18px rgba(0, 0, 0, 0.1);
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      justify-content: center;
+    }
+
+    .progress-card {
+      background: var(--card);
+      border-radius: 16px;
+      padding: 12px;
+      box-shadow: 0 8px 18px rgba(0, 0, 0, 0.1);
+      display: grid;
+      gap: 10px;
+    }
+
+    .progress-title {
+      font-size: 1.15rem;
+      font-weight: 800;
+      color: #4c1d95;
       text-align: center;
     }
 
-    .score-bar {
-      display: flex;
-      gap: 30px;
-      background: rgba(255,255,255,0.85);
-      border-radius: 50px;
-      padding: 10px 30px;
-      margin-bottom: 24px;
-      font-size: 1.2rem;
-      color: #555;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    .progress-summary {
+      text-align: center;
+      font-weight: 700;
+      color: #4b5563;
     }
 
-    .score-bar span { font-weight: bold; color: #e05a6f; }
+    .progress-list {
+      display: grid;
+      gap: 8px;
+    }
 
-    .game-card {
-      background: white;
-      border-radius: 28px;
-      padding: 40px 50px;
-      box-shadow: 0 8px 32px rgba(0,0,0,0.15);
-      display: flex;
-      flex-direction: column;
+    .progress-item {
+      display: grid;
+      grid-template-columns: 130px 1fr 62px;
+      gap: 8px;
       align-items: center;
-      gap: 24px;
-      max-width: 460px;
-      width: 100%;
+      font-size: 0.9rem;
+      font-weight: 700;
+      color: #334155;
     }
 
-    .emoji-mascot {
-      font-size: 5rem;
-      animation: bounce 1.5s infinite;
+    .progress-item-label {
+      text-align: left;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .progress-bar {
+      background: #e5e7eb;
+      border-radius: 999px;
+      overflow: hidden;
+      height: 12px;
+    }
+
+    .progress-fill {
+      height: 100%;
+      border-radius: 999px;
+      background: linear-gradient(135deg, #60a5fa, #8b5cf6);
+    }
+
+    .progress-item-value {
+      text-align: right;
+    }
+
+    .game-btn {
+      border: none;
+      border-radius: 999px;
+      padding: 10px 14px;
+      font-weight: 700;
+      cursor: pointer;
+      color: #ffffff;
+      background: #778ca3;
+      transition: transform 0.12s ease, box-shadow 0.12s ease, opacity 0.12s ease;
+      box-shadow: 0 4px 0 rgba(0, 0, 0, 0.15);
+      font-size: 0.95rem;
+    }
+
+    .game-btn[data-key="addition"] { background: var(--pink); }
+    .game-btn[data-key="multiplication"] { background: var(--purple); }
+    .game-btn[data-key="division"] { background: var(--blue); }
+    .game-btn[data-key="pathway"] { background: var(--orange); }
+    .game-btn[data-key="venn"] { background: var(--green); }
+    .game-btn[data-key="patterns"] { background: var(--yellow); color: #5c4300; }
+
+    .game-btn.active {
+      transform: translateY(-1px) scale(1.02);
+      box-shadow: 0 7px 0 rgba(0, 0, 0, 0.18);
+      outline: 3px solid #ffffff;
+    }
+
+    .card {
+      background: var(--card);
+      border-radius: 18px;
+      box-shadow: 0 10px 24px rgba(0, 0, 0, 0.1);
+      padding: 18px;
+      display: grid;
+      gap: 14px;
+      min-height: 430px;
+      align-content: start;
+    }
+
+    .header-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .game-name {
+      font-size: clamp(1.4rem, 2.8vw, 2rem);
+      color: var(--purple);
+      font-weight: 800;
+    }
+
+    .mascot {
+      font-size: 2rem;
+      animation: bounce 1.2s infinite;
     }
 
     @keyframes bounce {
       0%, 100% { transform: translateY(0); }
-      50% { transform: translateY(-12px); }
+      50% { transform: translateY(-6px); }
     }
 
-    .question {
-      font-size: 2.8rem;
-      color: #333;
+    .prompt {
+      font-size: clamp(1.35rem, 2.8vw, 2rem);
+      font-weight: 700;
       text-align: center;
-      min-height: 60px;
-    }
-
-    .answers {
+      min-height: 76px;
       display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 14px;
-      width: 100%;
+      place-items: center;
+      background: #f8faff;
+      border-radius: 14px;
+      padding: 10px;
+      border: 2px dashed #c7d2fe;
     }
 
-    .answer-btn {
-      font-family: inherit;
-      font-size: 2rem;
-      padding: 18px 10px;
+    .visual {
+      min-height: 82px;
+      display: grid;
+      place-items: center;
+    }
+
+    .options {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px;
+    }
+
+    .option-btn {
       border: none;
-      border-radius: 18px;
+      border-radius: 14px;
+      padding: 14px 10px;
+      font-size: clamp(1.1rem, 2.2vw, 1.4rem);
+      font-weight: 800;
+      color: #ffffff;
       cursor: pointer;
-      transition: transform 0.1s, box-shadow 0.1s;
-      box-shadow: 0 4px 0 rgba(0,0,0,0.15);
-      font-weight: bold;
-      color: white;
+      box-shadow: 0 4px 0 rgba(0, 0, 0, 0.16);
+      transition: transform 0.1s ease;
+      background: linear-gradient(135deg, #7f8fa6, #576574);
+      min-height: 68px;
     }
 
-    .answer-btn:nth-child(1) { background: #f8a5c2; }
-    .answer-btn:nth-child(2) { background: #78e08f; }
-    .answer-btn:nth-child(3) { background: #74b9ff; }
-    .answer-btn:nth-child(4) { background: #fdcb6e; }
+    .option-btn:nth-child(1) { background: linear-gradient(135deg, #ff7aa2, #ff5d86); }
+    .option-btn:nth-child(2) { background: linear-gradient(135deg, #7d8dff, #5d69ff); }
+    .option-btn:nth-child(3) { background: linear-gradient(135deg, #3bd6a2, #15b57f); }
+    .option-btn:nth-child(4) { background: linear-gradient(135deg, #ffbe4b, #ff9f1a); }
 
-    .answer-btn:hover { transform: translateY(-3px); box-shadow: 0 7px 0 rgba(0,0,0,0.15); }
-    .answer-btn:active { transform: translateY(2px); box-shadow: 0 2px 0 rgba(0,0,0,0.15); }
-
-    .answer-btn.correct {
-      background: #00b894 !important;
-      animation: pop 0.4s ease;
+    .option-btn:disabled {
+      opacity: 0.85;
+      cursor: not-allowed;
     }
 
-    .answer-btn.wrong {
-      background: #d63031 !important;
-      animation: shake 0.4s ease;
+    .option-btn.correct {
+      outline: 4px solid #16a34a;
+      transform: scale(1.02);
     }
 
-    @keyframes pop {
-      0% { transform: scale(1); }
-      50% { transform: scale(1.2); }
-      100% { transform: scale(1); }
-    }
-
-    @keyframes shake {
-      0%, 100% { transform: translateX(0); }
-      25% { transform: translateX(-8px); }
-      75% { transform: translateX(8px); }
+    .option-btn.wrong {
+      outline: 4px solid #ef4444;
+      transform: scale(0.98);
     }
 
     .feedback {
-      font-size: 1.6rem;
-      min-height: 40px;
+      font-size: 1.2rem;
       text-align: center;
-      font-weight: bold;
+      min-height: 34px;
+      font-weight: 800;
     }
 
-    .feedback.correct { color: #00b894; }
-    .feedback.wrong   { color: #d63031; }
+    .feedback.ok { color: #0f9f43; }
+    .feedback.nope { color: #d63031; }
 
-    .level-select {
+    .pathway {
       display: flex;
-      gap: 10px;
+      flex-wrap: wrap;
+      gap: 8px;
+      justify-content: center;
+      align-items: center;
+      font-weight: 800;
+    }
+
+    .chip {
+      background: #fff;
+      border-radius: 999px;
+      border: 2px solid #c5d6ff;
+      padding: 8px 12px;
+      min-width: 58px;
+      text-align: center;
+      box-shadow: 0 3px 0 rgba(0, 0, 0, 0.08);
+    }
+
+    .arrow {
+      font-size: 1.15rem;
+      color: #6b7280;
+    }
+
+    .venn-box {
+      width: min(360px, 100%);
+      display: grid;
+      place-items: center;
+      padding: 10px 0 6px;
+    }
+
+    .venn {
+      width: 310px;
+      height: 150px;
+      position: relative;
+    }
+
+    .circle {
+      position: absolute;
+      width: 140px;
+      height: 140px;
+      border-radius: 50%;
+      display: grid;
+      place-items: start center;
+      padding-top: 9px;
+      font-weight: 700;
+      color: #1f2937;
+      font-size: 0.85rem;
+    }
+
+    .circle.a {
+      left: 26px;
+      background: rgba(255, 129, 167, 0.38);
+      border: 2px solid #ff5d86;
+    }
+
+    .circle.b {
+      right: 26px;
+      background: rgba(102, 187, 255, 0.35);
+      border: 2px solid #3796ff;
+    }
+
+    .item-pill {
+      margin-top: 6px;
+      background: #ffffff;
+      border: 2px solid #111827;
+      border-radius: 999px;
+      padding: 6px 12px;
+      font-weight: 800;
+      font-size: 0.95rem;
+    }
+
+    .footer-note {
+      text-align: center;
+      color: #5b6471;
+      font-size: 0.9rem;
+    }
+
+    .login-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(17, 24, 39, 0.45);
+      display: grid;
+      place-items: center;
+      z-index: 50;
+      padding: 16px;
+    }
+
+    .hidden {
+      display: none !important;
+    }
+
+    .login-card {
+      width: min(450px, 100%);
+      background: #ffffff;
+      border-radius: 18px;
+      box-shadow: 0 18px 40px rgba(0, 0, 0, 0.22);
+      padding: 18px;
+      display: grid;
+      gap: 12px;
+      text-align: center;
+    }
+
+    .login-card h2 {
+      color: #7c3aed;
+      font-size: 1.45rem;
+    }
+
+    .login-card p {
+      color: #4b5563;
+      font-size: 0.95rem;
+    }
+
+    .login-form {
+      display: flex;
+      gap: 8px;
+    }
+
+    .login-input {
+      flex: 1;
+      border-radius: 10px;
+      border: 2px solid #d1d5db;
+      padding: 10px;
+      font-size: 1rem;
+      font-weight: 700;
+    }
+
+    .login-submit {
+      border: none;
+      border-radius: 10px;
+      background: linear-gradient(135deg, #ec4899, #8b5cf6);
+      color: #ffffff;
+      font-weight: 800;
+      padding: 10px 14px;
+      cursor: pointer;
+    }
+
+    .login-error {
+      min-height: 18px;
+      color: #dc2626;
+      font-size: 0.85rem;
+      font-weight: 700;
+    }
+
+    .profile-buttons {
+      display: flex;
       flex-wrap: wrap;
       justify-content: center;
+      gap: 6px;
     }
 
-    .level-btn {
-      font-family: inherit;
-      font-size: 1rem;
-      padding: 8px 20px;
-      border: 3px solid #e05a6f;
-      border-radius: 50px;
-      background: white;
-      color: #e05a6f;
+    .profile-btn {
+      border: 2px solid #ddd6fe;
+      border-radius: 999px;
+      background: #f5f3ff;
+      color: #5b21b6;
+      font-weight: 700;
+      padding: 6px 10px;
       cursor: pointer;
-      font-weight: bold;
-      transition: all 0.15s;
     }
 
-    .level-btn.active, .level-btn:hover {
-      background: #e05a6f;
-      color: white;
+    .profile-empty {
+      color: #6b7280;
+      font-size: 0.85rem;
     }
 
-    .stars {
-      font-size: 2rem;
-      letter-spacing: 4px;
-      min-height: 40px;
+    @media (max-width: 700px) {
+      .stats {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+      }
+
+      .options {
+        grid-template-columns: 1fr;
+      }
+
+      .progress-item {
+        grid-template-columns: 1fr;
+        gap: 4px;
+      }
+
+      .progress-item-label,
+      .progress-item-value {
+        text-align: center;
+      }
+
+      .login-form {
+        flex-direction: column;
+      }
+    }
+
+    @media (max-width: 500px) {
+      .stats {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
     }
   </style>
 </head>
 <body>
+  <main class="app">
+    <h1 class="title">Grade 1 Learning Arcade</h1>
 
-  <h1>Math Fun! 🌟</h1>
+    <section class="stats">
+      <div class="stat">Score<br /><strong id="score">0</strong></div>
+      <div class="stat">Streak<br /><strong id="streak">0</strong></div>
+      <div class="stat">Stars<br /><strong id="stars">0</strong></div>
+      <div class="stat">Game<br /><strong id="game-short">Addition</strong></div>
+    </section>
 
-  <div class="score-bar">
-    <div>Score: <span id="score">0</span></div>
-    <div>Streak: <span id="streak">0</span> 🔥</div>
-    <div>Level: <span id="level-label">Easy</span></div>
-  </div>
+    <section class="games" id="game-picker"></section>
 
-  <div class="game-card">
-    <div class="emoji-mascot" id="mascot">🐱</div>
+    <section class="card">
+      <div class="header-row">
+        <div class="game-name" id="game-name">Simple Addition</div>
+        <div class="mascot" id="mascot" aria-hidden="true">🐻</div>
+      </div>
 
-    <div class="level-select">
-      <button class="level-btn active" onclick="setLevel('easy')">Easy (+, –)</button>
-      <button class="level-btn" onclick="setLevel('medium')">Medium (×)</button>
-      <button class="level-btn" onclick="setLevel('hard')">Hard (÷)</button>
-    </div>
-
-    <div class="question" id="question">Loading...</div>
-
-    <div class="answers" id="answers"></div>
-
-    <div class="feedback" id="feedback"></div>
-
-    <div class="stars" id="stars"></div>
-  </div>
+      <div class="prompt" id="prompt">Loading question...</div>
+      <div class="visual" id="visual"></div>
+      <div class="options" id="options"></div>
+      <div class="feedback" id="feedback"></div>
+      <div class="footer-note">Tap the best answer and keep learning.</div>
+    </section>
+  </main>
 
   <script>
-    const mascots = ['🐱', '🐶', '🐸', '🦊', '🐼', '🐨', '🦁', '🐯', '🐮', '🐰'];
-    let score = 0;
-    let streak = 0;
-    let correctAnswer = 0;
-    let level = 'easy';
-    let locked = false;
+    const mascots = ["🐻", "🦊", "🐯", "🦁", "🐼", "🐰", "🐸", "🐶"];
+    const cheers = [
+      "Great job!",
+      "Nice work!",
+      "Awesome!",
+      "You got it!",
+      "Brilliant!",
+      "Super thinking!"
+    ];
 
-    function setLevel(l) {
-      level = l;
-      document.querySelectorAll('.level-btn').forEach(b => b.classList.remove('active'));
-      event.target.classList.add('active');
-      document.getElementById('level-label').textContent =
-        l === 'easy' ? 'Easy' : l === 'medium' ? 'Medium' : 'Hard';
-      newQuestion();
-    }
+    const PROFILE_STORAGE_KEY = "grade1_arcade_profiles_v1";
 
-    function rand(min, max) {
+    const state = {
+      gameKey: "addition",
+      score: 0,
+      streak: 0,
+      bestStreak: 0,
+      locked: false,
+      timerId: null,
+      currentQuestion: null,
+      profiles: {},
+      currentProfileName: null
+    };
+
+    function randInt(min, max) {
       return Math.floor(Math.random() * (max - min + 1)) + min;
     }
 
-    function generateQuestion() {
-      let a, b, op, answer, questionText;
-
-      if (level === 'easy') {
-        op = Math.random() < 0.5 ? '+' : '−';
-        a = rand(1, 10);
-        b = rand(1, 10);
-        if (op === '−') {
-          // keep answer positive
-          if (a < b) [a, b] = [b, a];
-          answer = a - b;
-        } else {
-          answer = a + b;
-        }
-        questionText = `${a} ${op} ${b} = ?`;
-      } else if (level === 'medium') {
-        a = rand(2, 10);
-        b = rand(2, 10);
-        answer = a * b;
-        questionText = `${a} × ${b} = ?`;
-      } else {
-        b = rand(2, 10);
-        answer = rand(2, 10);
-        a = b * answer;
-        questionText = `${a} ÷ ${b} = ?`;
-      }
-
-      return { questionText, answer };
-    }
-
-    function shuffle(arr) {
-      for (let i = arr.length - 1; i > 0; i--) {
+    function shuffled(arr) {
+      const copy = [...arr];
+      for (let i = copy.length - 1; i > 0; i--) {
         const j = Math.floor(Math.random() * (i + 1));
-        [arr[i], arr[j]] = [arr[j], arr[i]];
+        [copy[i], copy[j]] = [copy[j], copy[i]];
       }
-      return arr;
+      return copy;
     }
 
-    function newQuestion() {
-      locked = false;
-      document.getElementById('feedback').textContent = '';
-      document.getElementById('feedback').className = 'feedback';
+    function buildNumericOptions(answer, min = 0, max = 30) {
+      const values = new Set([answer]);
+      let guard = 0;
 
-      // Change mascot occasionally
-      if (Math.random() < 0.3) {
-        document.getElementById('mascot').textContent =
-          mascots[rand(0, mascots.length - 1)];
+      while (values.size < 4 && guard < 120) {
+        guard += 1;
+        const delta = randInt(-6, 6);
+        if (delta === 0) continue;
+        const candidate = answer + delta;
+        if (candidate >= min && candidate <= max) values.add(candidate);
       }
 
-      const { questionText, answer } = generateQuestion();
-      correctAnswer = answer;
-      document.getElementById('question').textContent = questionText;
-
-      // Generate 3 wrong answers
-      const wrong = new Set();
-      while (wrong.size < 3) {
-        const w = answer + rand(-5, 5);
-        if (w !== answer && w >= 0) wrong.add(w);
+      if (values.size < 4) {
+        for (let n = min; n <= max && values.size < 4; n++) {
+          if (n !== answer) values.add(n);
+        }
       }
 
-      const choices = shuffle([answer, ...wrong]);
-      const container = document.getElementById('answers');
-      container.innerHTML = '';
+      const options = shuffled([...values]);
+      return {
+        options: options.map((value) => String(value)),
+        correctIndex: options.indexOf(answer)
+      };
+    }
 
-      choices.forEach(choice => {
-        const btn = document.createElement('button');
-        btn.className = 'answer-btn';
-        btn.textContent = choice;
-        btn.onclick = () => handleAnswer(btn, choice);
-        container.appendChild(btn);
+    function gameAddition() {
+      const a = randInt(0, 10);
+      const b = randInt(0, 10);
+      const answer = a + b;
+      const data = buildNumericOptions(answer, 0, 20);
+
+      return {
+        prompt: `${a} + ${b} = ?`,
+        visualHtml: "",
+        options: data.options,
+        correctIndex: data.correctIndex,
+        points: 10
+      };
+    }
+
+    function gameMultiplication() {
+      const a = randInt(1, 5);
+      const b = randInt(1, 5);
+      const answer = a * b;
+      const data = buildNumericOptions(answer, 0, 30);
+
+      return {
+        prompt: `${a} × ${b} = ?`,
+        visualHtml: "",
+        options: data.options,
+        correctIndex: data.correctIndex,
+        points: 12
+      };
+    }
+
+    function gameDivision() {
+      const divisor = randInt(1, 5);
+      const quotient = randInt(1, 10);
+      const dividend = divisor * quotient;
+      const answer = quotient;
+      const data = buildNumericOptions(answer, 0, 12);
+
+      return {
+        prompt: `${dividend} ÷ ${divisor} = ?`,
+        visualHtml: "",
+        options: data.options,
+        correctIndex: data.correctIndex,
+        points: 14
+      };
+    }
+
+    function gamePathway() {
+      let current = randInt(2, 10);
+      const start = current;
+      const operations = [];
+
+      for (let i = 0; i < 3; i++) {
+        const shouldSubtract = Math.random() < 0.35 && current > 3;
+        const amount = randInt(1, 4);
+        const sign = shouldSubtract && current - amount >= 0 ? "-" : "+";
+        const delta = sign === "-" ? -amount : amount;
+        operations.push(`${sign}${amount}`);
+        current += delta;
+      }
+
+      const answer = current;
+      const data = buildNumericOptions(answer, 0, 25);
+      const pieces = [`<span class="chip">${start}</span>`];
+
+      operations.forEach((op) => {
+        pieces.push(`<span class="arrow">→</span>`);
+        pieces.push(`<span class="chip">${op}</span>`);
+      });
+      pieces.push(`<span class="arrow">→</span><span class="chip">?</span>`);
+
+      return {
+        prompt: "Follow the pathway. Where do you end?",
+        visualHtml: `<div class="pathway">${pieces.join("")}</div>`,
+        options: data.options,
+        correctIndex: data.correctIndex,
+        points: 16
+      };
+    }
+
+    const vennThemes = [
+      {
+        setA: "Animals",
+        setB: "Can Fly",
+        items: [
+          { name: "Bird", a: true, b: true },
+          { name: "Dog", a: true, b: false },
+          { name: "Airplane", a: false, b: true },
+          { name: "Book", a: false, b: false }
+        ]
+      },
+      {
+        setA: "Red Things",
+        setB: "Round Things",
+        items: [
+          { name: "Apple", a: true, b: true },
+          { name: "Red Flag", a: true, b: false },
+          { name: "Blue Ball", a: false, b: true },
+          { name: "Pencil", a: false, b: false }
+        ]
+      },
+      {
+        setA: "Can Swim",
+        setB: "Has Legs",
+        items: [
+          { name: "Duck", a: true, b: true },
+          { name: "Fish", a: true, b: false },
+          { name: "Cat", a: false, b: true },
+          { name: "Boat", a: false, b: false }
+        ]
+      }
+    ];
+
+    function gameVenn() {
+      const theme = vennThemes[randInt(0, vennThemes.length - 1)];
+      const item = theme.items[randInt(0, theme.items.length - 1)];
+      const labels = [
+        `${theme.setA} only`,
+        `${theme.setB} only`,
+        "Both sets",
+        "Neither set"
+      ];
+
+      let correctIndex = 3;
+      if (item.a && item.b) correctIndex = 2;
+      else if (item.a) correctIndex = 0;
+      else if (item.b) correctIndex = 1;
+
+      const visualHtml = `
+        <div class="venn-box">
+          <div class="venn">
+            <div class="circle a">${theme.setA}</div>
+            <div class="circle b">${theme.setB}</div>
+          </div>
+          <div class="item-pill">${item.name}</div>
+        </div>
+      `;
+
+      return {
+        prompt: `Where does "${item.name}" belong?`,
+        visualHtml,
+        options: labels,
+        correctIndex,
+        points: 18
+      };
+    }
+
+    function gamePatterns() {
+      const start = randInt(1, 8);
+      const step = randInt(1, 5);
+      const sequence = [start, start + step, start + step * 2, start + step * 3, start + step * 4];
+      const missingIndex = randInt(1, 3);
+      const answer = sequence[missingIndex];
+
+      const shown = sequence.map((n, idx) => (idx === missingIndex ? "?" : String(n)));
+      const data = buildNumericOptions(answer, 0, 35);
+
+      return {
+        prompt: "What number is missing in the pattern?",
+        visualHtml: `<div class="pathway">${shown.map((n) => `<span class="chip">${n}</span>`).join('<span class="arrow">→</span>')}</div>`,
+        options: data.options,
+        correctIndex: data.correctIndex,
+        points: 12
+      };
+    }
+
+    const games = {
+      addition: { name: "Simple Addition", short: "Addition", run: gameAddition },
+      multiplication: { name: "Simple Multiplication", short: "Multiply", run: gameMultiplication },
+      division: { name: "Simple Division", short: "Division", run: gameDivision },
+      pathway: { name: "Pathway Problems", short: "Pathway", run: gamePathway },
+      venn: { name: "Venn Diagrams", short: "Venn", run: gameVenn },
+      patterns: { name: "Number Patterns", short: "Patterns", run: gamePatterns }
+    };
+
+    function defaultProgress() {
+      const perGame = {};
+      Object.keys(games).forEach((key) => {
+        perGame[key] = { attempted: 0, correct: 0 };
+      });
+      return {
+        score: 0,
+        streak: 0,
+        bestStreak: 0,
+        stars: 0,
+        answered: 0,
+        correct: 0,
+        perGame
+      };
+    }
+
+    function normalizeProfile(raw) {
+      const base = defaultProgress();
+      if (!raw || typeof raw !== "object") return base;
+
+      const merged = {
+        ...base,
+        score: Number.isFinite(raw.score) ? raw.score : base.score,
+        streak: Number.isFinite(raw.streak) ? raw.streak : base.streak,
+        bestStreak: Number.isFinite(raw.bestStreak) ? raw.bestStreak : base.bestStreak,
+        stars: Number.isFinite(raw.stars) ? raw.stars : base.stars,
+        answered: Number.isFinite(raw.answered) ? raw.answered : base.answered,
+        correct: Number.isFinite(raw.correct) ? raw.correct : base.correct,
+        perGame: { ...base.perGame }
+      };
+
+      if (raw.perGame && typeof raw.perGame === "object") {
+        Object.keys(base.perGame).forEach((key) => {
+          const source = raw.perGame[key] || {};
+          merged.perGame[key] = {
+            attempted: Number.isFinite(source.attempted) ? source.attempted : 0,
+            correct: Number.isFinite(source.correct) ? source.correct : 0
+          };
+        });
+      }
+
+      return merged;
+    }
+
+    function loadProfiles() {
+      try {
+        const saved = localStorage.getItem(PROFILE_STORAGE_KEY);
+        if (!saved) return {};
+        const parsed = JSON.parse(saved);
+        if (!parsed || typeof parsed !== "object") return {};
+        const result = {};
+        Object.entries(parsed).forEach(([name, progress]) => {
+          result[name] = normalizeProfile(progress);
+        });
+        return result;
+      } catch {
+        return {};
+      }
+    }
+
+    function saveProfiles() {
+      localStorage.setItem(PROFILE_STORAGE_KEY, JSON.stringify(state.profiles));
+    }
+
+    function setProfileList() {
+      const list = document.getElementById("profile-list");
+      list.innerHTML = "";
+      Object.keys(state.profiles).sort().forEach((name) => {
+        const option = document.createElement("option");
+        option.value = name;
+        list.appendChild(option);
       });
     }
 
-    function handleAnswer(btn, choice) {
-      if (locked) return;
-      locked = true;
+    function profileCardText(progress) {
+      const accuracy = progress.answered === 0
+        ? 0
+        : Math.round((progress.correct / progress.answered) * 100);
+      return `Questions: ${progress.answered} | Accuracy: ${accuracy}%`;
+    }
 
-      const allBtns = document.querySelectorAll('.answer-btn');
+    function setProfileMessage(text, kind = "ok") {
+      const message = document.getElementById("profile-message");
+      message.textContent = text;
+      message.className = `profile-message ${kind}`;
+    }
 
-      if (choice === correctAnswer) {
-        btn.classList.add('correct');
-        score += level === 'easy' ? 10 : level === 'medium' ? 20 : 30;
-        streak++;
-        document.getElementById('score').textContent = score;
-        document.getElementById('streak').textContent = streak;
+    function hydrateStateFromProfile(name) {
+      const progress = state.profiles[name];
+      if (!progress) return;
+      state.currentProfileName = name;
+      state.score = progress.score;
+      state.streak = progress.streak;
+      state.bestStreak = progress.bestStreak;
+      document.getElementById("current-player").textContent = name;
+      document.getElementById("profile-summary").textContent = profileCardText(progress);
+      document.getElementById("name-input").value = name;
+      document.getElementById("name-input").setCustomValidity("");
+    }
 
-        const praise = ['Amazing! 🎉', 'Super! ⭐', 'You rock! 🚀', 'Wow! 🌈', 'Brilliant! 💡', 'Perfect! 🏆'];
-        const fb = document.getElementById('feedback');
-        fb.textContent = praise[rand(0, praise.length - 1)];
-        fb.className = 'feedback correct';
+    function ensureCurrentProgress() {
+      if (!state.currentProfileName) return null;
+      if (!state.profiles[state.currentProfileName]) {
+        state.profiles[state.currentProfileName] = defaultProgress();
+      }
+      return state.profiles[state.currentProfileName];
+    }
 
-        updateStars();
-        setTimeout(newQuestion, 1200);
+    function submitProfile() {
+      const input = document.getElementById("name-input");
+      const raw = input.value.trim();
+      if (raw.length < 2) {
+        input.setCustomValidity("Name must be at least 2 letters.");
+        input.reportValidity();
+        return;
+      }
+      input.setCustomValidity("");
+
+      const normalized = raw.replace(/\s+/g, " ").slice(0, 20);
+      if (!state.profiles[normalized]) {
+        state.profiles[normalized] = defaultProgress();
+      }
+      hydrateStateFromProfile(normalized);
+      saveProfiles();
+      setProfileList();
+      setProfileMessage(`Welcome, ${normalized}! Your progress is ready.`);
+      updateStats();
+      nextQuestion();
+    }
+
+    function resetProgress() {
+      if (!state.currentProfileName) return;
+      const name = state.currentProfileName;
+      state.profiles[name] = defaultProgress();
+      hydrateStateFromProfile(name);
+      saveProfiles();
+      setProfileMessage("Progress reset for this player.", "warn");
+      updateStats();
+      nextQuestion();
+    }
+
+    function renderPicker() {
+      const holder = document.getElementById("game-picker");
+      holder.innerHTML = "";
+
+      Object.entries(games).forEach(([key, game]) => {
+        const button = document.createElement("button");
+        button.className = "game-btn";
+        button.dataset.key = key;
+        button.textContent = game.name;
+        button.addEventListener("click", () => setGame(key));
+        holder.appendChild(button);
+      });
+    }
+
+    function setGame(key) {
+      if (!games[key]) return;
+      state.gameKey = key;
+
+      if (state.timerId) {
+        clearTimeout(state.timerId);
+        state.timerId = null;
+      }
+
+      document.querySelectorAll(".game-btn").forEach((btn) => {
+        btn.classList.toggle("active", btn.dataset.key === key);
+      });
+
+      const game = games[key];
+      document.getElementById("game-name").textContent = game.name;
+      document.getElementById("game-short").textContent = game.short;
+      if (!state.currentProfileName) return;
+      nextQuestion();
+    }
+
+    function updateStats() {
+      document.getElementById("score").textContent = state.score;
+      document.getElementById("streak").textContent = state.streak;
+      document.getElementById("stars").textContent = Math.floor(state.score / 50);
+      document.getElementById("best-streak").textContent = state.bestStreak;
+    }
+
+    function nextQuestion() {
+      if (!state.currentProfileName) return;
+      state.locked = false;
+      state.currentQuestion = games[state.gameKey].run();
+
+      document.getElementById("prompt").textContent = state.currentQuestion.prompt;
+      document.getElementById("visual").innerHTML = state.currentQuestion.visualHtml || "";
+      document.getElementById("feedback").textContent = "";
+      document.getElementById("feedback").className = "feedback";
+      document.getElementById("mascot").textContent = mascots[randInt(0, mascots.length - 1)];
+
+      const options = document.getElementById("options");
+      options.innerHTML = "";
+      state.currentQuestion.options.forEach((label, index) => {
+        const button = document.createElement("button");
+        button.className = "option-btn";
+        button.type = "button";
+        button.textContent = label;
+        button.addEventListener("click", () => submitAnswer(index));
+        options.appendChild(button);
+      });
+    }
+
+    function submitAnswer(index) {
+      if (state.locked || !state.currentQuestion) return;
+      state.locked = true;
+      const progress = ensureCurrentProgress();
+      if (!progress) return;
+
+      if (state.timerId) {
+        clearTimeout(state.timerId);
+        state.timerId = null;
+      }
+
+      const buttons = [...document.querySelectorAll(".option-btn")];
+      buttons.forEach((button) => {
+        button.disabled = true;
+      });
+
+      const feedback = document.getElementById("feedback");
+      const isCorrect = index === state.currentQuestion.correctIndex;
+
+      if (isCorrect) {
+        state.score += state.currentQuestion.points;
+        state.streak += 1;
+        state.bestStreak = Math.max(state.bestStreak, state.streak);
+        progress.correct += 1;
+        progress.perGame[state.gameKey].correct += 1;
+        buttons[index].classList.add("correct");
+        feedback.textContent = cheers[randInt(0, cheers.length - 1)];
+        feedback.className = "feedback ok";
+        progress.score = state.score;
+        progress.streak = state.streak;
+        progress.bestStreak = state.bestStreak;
+        progress.answered += 1;
+        progress.perGame[state.gameKey].attempted += 1;
+        progress.stars = Math.floor(state.score / 50);
+        updateStats();
+        document.getElementById("profile-summary").textContent = profileCardText(progress);
+        saveProfiles();
+        state.timerId = setTimeout(nextQuestion, 1000);
       } else {
-        btn.classList.add('wrong');
-        streak = 0;
-        document.getElementById('streak').textContent = 0;
-
-        // Show the correct answer
-        allBtns.forEach(b => {
-          if (parseInt(b.textContent) === correctAnswer) b.classList.add('correct');
-        });
-
-        const fb = document.getElementById('feedback');
-        fb.textContent = `The answer is ${correctAnswer}! Try again! 💪`;
-        fb.className = 'feedback wrong';
-
-        setTimeout(newQuestion, 1800);
+        state.streak = 0;
+        buttons[index].classList.add("wrong");
+        buttons[state.currentQuestion.correctIndex].classList.add("correct");
+        const rightAnswer = state.currentQuestion.options[state.currentQuestion.correctIndex];
+        feedback.textContent = `Good try. The answer was ${rightAnswer}.`;
+        feedback.className = "feedback nope";
+        progress.score = state.score;
+        progress.streak = 0;
+        progress.bestStreak = state.bestStreak;
+        progress.answered += 1;
+        progress.perGame[state.gameKey].attempted += 1;
+        progress.stars = Math.floor(state.score / 50);
+        updateStats();
+        document.getElementById("profile-summary").textContent = profileCardText(progress);
+        saveProfiles();
+        state.timerId = setTimeout(nextQuestion, 1600);
       }
     }
 
-    function updateStars() {
-      const starsDiv = document.getElementById('stars');
-      const count = Math.min(Math.floor(score / 50), 10);
-      starsDiv.textContent = '⭐'.repeat(count);
+    function initLogin() {
+      state.profiles = loadProfiles();
+      setProfileList();
+      const allNames = Object.keys(state.profiles).sort();
+      if (allNames.length > 0) {
+        hydrateStateFromProfile(allNames[0]);
+        setProfileMessage("Pick your name and press Start.");
+      } else {
+        setProfileMessage("Create a player name to begin.");
+      }
+
+      document.getElementById("start-btn").addEventListener("click", submitProfile);
+      document.getElementById("name-input").addEventListener("keydown", (event) => {
+        if (event.key === "Enter") submitProfile();
+      });
+      document.getElementById("reset-btn").addEventListener("click", resetProgress);
     }
 
-    newQuestion();
-
-    if ('serviceWorker' in navigator) {
-      navigator.serviceWorker.register('/sw.js');
-    }
+    renderPicker();
+    initLogin();
+    updateStats();
   </script>
 </body>
 </html>
