@@ -1,4 +1,4 @@
-const CACHE_NAME = 'math-fun-v1';
+const CACHE_NAME = 'math-run-v3';
 const ASSETS = ['/', '/index.html', '/manifest.json'];
 
 self.addEventListener('install', (e) => {

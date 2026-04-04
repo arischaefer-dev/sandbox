@@ -1,14 +1,14 @@
 {
-  "name": "Math Fun for Kids!",
-  "short_name": "Math Fun",
+  "name": "Math Run!",
+  "short_name": "Math Run",
   "start_url": "/index.html",
   "display": "standalone",
-  "background_color": "#fad0c4",
-  "theme_color": "#e05a6f",
-  "description": "A colorful math game for 6-year-olds",
+  "background_color": "#0d0d2b",
+  "theme_color": "#1a1a3e",
+  "description": "A fast-paced math game for kids",
   "icons": [
     {
-      "src": "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='80' font-size='80'>🌟</text></svg>",
+      "src": "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='80' font-size='80'>🧮</text></svg>",
       "sizes": "any",
       "type": "image/svg+xml"
     }
