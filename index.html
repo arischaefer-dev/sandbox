@@ -162,11 +162,114 @@
       letter-spacing: 4px;
       min-height: 40px;
     }
+
+    .welcome-overlay {
+      position: fixed;
+      inset: 0;
+      background: linear-gradient(135deg, #ff9a9e 0%, #fad0c4 50%, #ffecd2 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 100;
+    }
+
+    .welcome-card {
+      background: white;
+      border-radius: 28px;
+      padding: 50px;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.15);
+      text-align: center;
+      max-width: 420px;
+      width: 90%;
+    }
+
+    .welcome-card .emoji-mascot { margin-bottom: 10px; }
+
+    .welcome-card h2 {
+      font-size: 2rem;
+      color: #e05a6f;
+      margin-bottom: 8px;
+    }
+
+    .welcome-card p {
+      color: #777;
+      font-size: 1.1rem;
+      margin-bottom: 24px;
+    }
+
+    .name-input {
+      font-family: inherit;
+      font-size: 1.6rem;
+      padding: 14px 20px;
+      border: 3px solid #f8a5c2;
+      border-radius: 18px;
+      outline: none;
+      text-align: center;
+      width: 100%;
+      margin-bottom: 18px;
+      transition: border-color 0.2s;
+    }
+
+    .name-input:focus { border-color: #e05a6f; }
+
+    .start-btn {
+      font-family: inherit;
+      font-size: 1.4rem;
+      font-weight: bold;
+      padding: 14px 40px;
+      border: none;
+      border-radius: 50px;
+      background: #e05a6f;
+      color: white;
+      cursor: pointer;
+      box-shadow: 0 4px 0 #c0445a;
+      transition: transform 0.1s, box-shadow 0.1s;
+    }
+
+    .start-btn:hover { transform: translateY(-2px); box-shadow: 0 6px 0 #c0445a; }
+    .start-btn:active { transform: translateY(2px); box-shadow: 0 2px 0 #c0445a; }
+    .start-btn:disabled { opacity: 0.5; cursor: default; transform: none; }
+
+    .greeting {
+      font-size: 1.1rem;
+      color: #e05a6f;
+      font-weight: bold;
+    }
+
+    .best-score {
+      font-size: 0.95rem;
+      color: #aaa;
+      margin-top: 4px;
+    }
+
+    .change-name {
+      font-family: inherit;
+      font-size: 0.8rem;
+      background: none;
+      border: none;
+      color: #bbb;
+      cursor: pointer;
+      text-decoration: underline;
+      margin-top: 6px;
+    }
+
+    .change-name:hover { color: #e05a6f; }
   </style>
 </head>
 <body>
 
-  <h1>Math Fun! 🌟</h1>
+  <div class="welcome-overlay" id="welcome">
+    <div class="welcome-card">
+      <div class="emoji-mascot">🌟</div>
+      <h2>Welcome to Math Fun!</h2>
+      <p>What's your name?</p>
+      <input class="name-input" id="name-input" type="text" placeholder="Type your name..." maxlength="20" autofocus />
+      <br />
+      <button class="start-btn" id="start-btn" disabled onclick="startGame()">Let's Go! 🚀</button>
+    </div>
+  </div>
+
+  <h1 id="title">Math Fun! 🌟</h1>
 
   <div class="score-bar">
     <div>Score: <span id="score">0</span></div>
@@ -175,6 +278,9 @@
   </div>
 
   <div class="game-card">
+    <div class="greeting" id="greeting"></div>
+    <div class="best-score" id="best-score"></div>
+
     <div class="emoji-mascot" id="mascot">🐱</div>
 
     <div class="level-select">
@@ -190,15 +296,81 @@
     <div class="feedback" id="feedback"></div>
 
     <div class="stars" id="stars"></div>
+
+    <button class="change-name" onclick="resetName()">Change name</button>
   </div>
 
   <script>
+    const STORAGE_KEY = 'mathfun_progress';
     const mascots = ['🐱', '🐶', '🐸', '🦊', '🐼', '🐨', '🦁', '🐯', '🐮', '🐰'];
+    let playerName = '';
     let score = 0;
+    let bestScore = 0;
     let streak = 0;
     let correctAnswer = 0;
     let level = 'easy';
     let locked = false;
+
+    function loadProgress() {
+      try {
+        const data = JSON.parse(localStorage.getItem(STORAGE_KEY));
+        if (data) {
+          playerName = data.name || '';
+          score = data.score || 0;
+          bestScore = data.bestScore || 0;
+          streak = data.streak || 0;
+          level = data.level || 'easy';
+        }
+      } catch (e) {}
+    }
+
+    function saveProgress() {
+      if (score > bestScore) bestScore = score;
+      try {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify({
+          name: playerName,
+          score: score,
+          bestScore: bestScore,
+          streak: streak,
+          level: level
+        }));
+      } catch (e) {}
+    }
+
+    function startGame() {
+      const input = document.getElementById('name-input');
+      playerName = input.value.trim();
+      if (!playerName) return;
+      document.getElementById('welcome').style.display = 'none';
+      applyPlayerState();
+      saveProgress();
+      newQuestion();
+    }
+
+    function applyPlayerState() {
+      document.getElementById('title').textContent = `${playerName}'s Math Fun! 🌟`;
+      document.getElementById('greeting').textContent = `Go ${playerName}! You've got this! 💪`;
+      document.getElementById('score').textContent = score;
+      document.getElementById('streak').textContent = streak;
+      document.getElementById('level-label').textContent =
+        level === 'easy' ? 'Easy' : level === 'medium' ? 'Medium' : 'Hard';
+      updateBestScoreDisplay();
+      updateStars();
+
+      document.querySelectorAll('.level-btn').forEach(b => b.classList.remove('active'));
+      const idx = level === 'easy' ? 0 : level === 'medium' ? 1 : 2;
+      document.querySelectorAll('.level-btn')[idx].classList.add('active');
+    }
+
+    function updateBestScoreDisplay() {
+      const el = document.getElementById('best-score');
+      el.textContent = bestScore > 0 ? `Best score: ${bestScore} ⭐` : '';
+    }
+
+    function resetName() {
+      localStorage.removeItem(STORAGE_KEY);
+      location.reload();
+    }
 
     function setLevel(l) {
       level = l;
@@ -206,6 +378,7 @@
       event.target.classList.add('active');
       document.getElementById('level-label').textContent =
         l === 'easy' ? 'Easy' : l === 'medium' ? 'Medium' : 'Hard';
+      saveProgress();
       newQuestion();
     }
 
@@ -221,7 +394,6 @@
         a = rand(1, 10);
         b = rand(1, 10);
         if (op === '−') {
-          // keep answer positive
           if (a < b) [a, b] = [b, a];
           answer = a - b;
         } else {
@@ -256,7 +428,6 @@
       document.getElementById('feedback').textContent = '';
       document.getElementById('feedback').className = 'feedback';
 
-      // Change mascot occasionally
       if (Math.random() < 0.3) {
         document.getElementById('mascot').textContent =
           mascots[rand(0, mascots.length - 1)];
@@ -266,7 +437,6 @@
       correctAnswer = answer;
       document.getElementById('question').textContent = questionText;
 
-      // Generate 3 wrong answers
       const wrong = new Set();
       while (wrong.size < 3) {
         const w = answer + rand(-5, 5);
@@ -299,27 +469,35 @@
         document.getElementById('score').textContent = score;
         document.getElementById('streak').textContent = streak;
 
-        const praise = ['Amazing! 🎉', 'Super! ⭐', 'You rock! 🚀', 'Wow! 🌈', 'Brilliant! 💡', 'Perfect! 🏆'];
+        const praise = [
+          `Amazing, ${playerName}! 🎉`,
+          `Super, ${playerName}! ⭐`,
+          `${playerName}, you rock! 🚀`,
+          `Wow, ${playerName}! 🌈`,
+          `Brilliant, ${playerName}! 💡`,
+          `Perfect, ${playerName}! 🏆`
+        ];
         const fb = document.getElementById('feedback');
         fb.textContent = praise[rand(0, praise.length - 1)];
         fb.className = 'feedback correct';
 
         updateStars();
+        saveProgress();
         setTimeout(newQuestion, 1200);
       } else {
         btn.classList.add('wrong');
         streak = 0;
         document.getElementById('streak').textContent = 0;
 
-        // Show the correct answer
         allBtns.forEach(b => {
           if (parseInt(b.textContent) === correctAnswer) b.classList.add('correct');
         });
 
         const fb = document.getElementById('feedback');
-        fb.textContent = `The answer is ${correctAnswer}! Try again! 💪`;
+        fb.textContent = `It's ${correctAnswer}. Keep going, ${playerName}! 💪`;
         fb.className = 'feedback wrong';
 
+        saveProgress();
         setTimeout(newQuestion, 1800);
       }
     }
@@ -330,7 +508,24 @@
       starsDiv.textContent = '⭐'.repeat(count);
     }
 
-    newQuestion();
+    // --- Init ---
+    loadProgress();
+
+    const nameInput = document.getElementById('name-input');
+    const startBtn = document.getElementById('start-btn');
+
+    nameInput.addEventListener('input', () => {
+      startBtn.disabled = !nameInput.value.trim();
+    });
+    nameInput.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' && nameInput.value.trim()) startGame();
+    });
+
+    if (playerName) {
+      document.getElementById('welcome').style.display = 'none';
+      applyPlayerState();
+      newQuestion();
+    }
 
     if ('serviceWorker' in navigator) {
       navigator.serviceWorker.register('/sw.js');
