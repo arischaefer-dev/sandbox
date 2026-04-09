@@ -1,0 +1,784 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Kyoto Private Tea Ceremony with Kimono</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: Georgia, 'Times New Roman', serif;
+      background: linear-gradient(160deg, #f5f0e8 0%, #ede0c8 50%, #e8d5b0 100%);
+      min-height: 100vh;
+      color: #3a2e22;
+    }
+
+    /* ── Header ── */
+    .header {
+      background: linear-gradient(135deg, #2d5016 0%, #4a7c2f 50%, #3d6b24 100%);
+      color: #f5f0e8;
+      padding: 28px 24px 22px;
+      text-align: center;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.2);
+    }
+
+    .header .kanji {
+      font-size: 2rem;
+      letter-spacing: 8px;
+      opacity: 0.7;
+      margin-bottom: 4px;
+    }
+
+    .header h1 {
+      font-size: 1.9rem;
+      font-weight: normal;
+      letter-spacing: 1px;
+      margin-bottom: 6px;
+    }
+
+    .header p {
+      font-size: 0.95rem;
+      opacity: 0.8;
+      font-style: italic;
+    }
+
+    /* ── Search Summary Bar ── */
+    .search-bar {
+      background: #fff8ee;
+      border-bottom: 2px solid #c8a96e;
+      padding: 14px 24px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .search-pill {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      background: #4a7c2f;
+      color: white;
+      border-radius: 50px;
+      padding: 6px 16px;
+      font-size: 0.9rem;
+      font-family: Georgia, serif;
+    }
+
+    .search-pill .icon { font-size: 1rem; }
+
+    .search-note {
+      width: 100%;
+      text-align: center;
+      font-size: 0.82rem;
+      color: #8b6914;
+      font-style: italic;
+    }
+
+    /* ── Listings ── */
+    .listings {
+      max-width: 900px;
+      margin: 32px auto;
+      padding: 0 16px 48px;
+      display: flex;
+      flex-direction: column;
+      gap: 28px;
+    }
+
+    .results-heading {
+      font-size: 1.1rem;
+      color: #5a4030;
+      text-align: center;
+      margin-bottom: -8px;
+      font-style: italic;
+    }
+
+    .card {
+      background: #fffdf8;
+      border-radius: 16px;
+      box-shadow: 0 4px 20px rgba(80,50,10,0.13);
+      border: 1px solid #d9c49a;
+      overflow: hidden;
+      transition: box-shadow 0.2s;
+    }
+
+    .card:hover {
+      box-shadow: 0 8px 32px rgba(80,50,10,0.2);
+    }
+
+    .card-header {
+      display: flex;
+      align-items: stretch;
+      gap: 0;
+    }
+
+    .card-accent {
+      width: 8px;
+      flex-shrink: 0;
+    }
+
+    .card-main {
+      flex: 1;
+      padding: 22px 24px 20px;
+    }
+
+    .card-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 10px;
+    }
+
+    .venue-name {
+      font-size: 1.3rem;
+      color: #2d1f0e;
+      font-weight: bold;
+    }
+
+    .venue-location {
+      font-size: 0.85rem;
+      color: #7a6040;
+      margin-top: 2px;
+    }
+
+    .price-block {
+      text-align: right;
+      flex-shrink: 0;
+    }
+
+    .price-jpy {
+      font-size: 1.4rem;
+      font-weight: bold;
+      color: #2d5016;
+    }
+
+    .price-usd {
+      font-size: 0.8rem;
+      color: #7a6040;
+    }
+
+    .price-label {
+      font-size: 0.75rem;
+      color: #9a8060;
+      font-style: italic;
+    }
+
+    .badges {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-bottom: 12px;
+    }
+
+    .badge {
+      font-size: 0.75rem;
+      padding: 3px 10px;
+      border-radius: 50px;
+      font-family: Georgia, serif;
+    }
+
+    .badge-green { background: #e8f5e0; color: #2d5016; border: 1px solid #b0d990; }
+    .badge-gold  { background: #fef9e7; color: #8b6914; border: 1px solid #d4ac3a; }
+    .badge-blue  { background: #e8f0fe; color: #1a56a0; border: 1px solid #a0c0f0; }
+
+    .highlights {
+      font-size: 0.88rem;
+      color: #5a4830;
+      line-height: 1.5;
+      margin-bottom: 16px;
+    }
+
+    .highlights ul {
+      list-style: none;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 4px 18px;
+    }
+
+    .highlights ul li::before {
+      content: "✦ ";
+      color: #b8860b;
+      font-size: 0.7rem;
+    }
+
+    /* ── Availability ── */
+    .avail-section {
+      border-top: 1px solid #e8d9b8;
+      padding-top: 16px;
+    }
+
+    .avail-label {
+      font-size: 0.82rem;
+      color: #7a6040;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-bottom: 10px;
+    }
+
+    .date-grid {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-bottom: 14px;
+    }
+
+    .date-btn {
+      font-family: Georgia, serif;
+      border: 2px solid #c8a96e;
+      border-radius: 10px;
+      background: white;
+      color: #5a4030;
+      padding: 8px 14px;
+      cursor: pointer;
+      transition: all 0.15s;
+      font-size: 0.9rem;
+      line-height: 1.2;
+      text-align: center;
+    }
+
+    .date-btn .day-num { font-size: 1.3rem; font-weight: bold; display: block; }
+    .date-btn .day-name { font-size: 0.7rem; color: #9a8060; display: block; }
+
+    .date-btn:hover {
+      border-color: #4a7c2f;
+      background: #f0f8e8;
+      color: #2d5016;
+    }
+
+    .date-btn.selected {
+      border-color: #2d5016;
+      background: #2d5016;
+      color: white;
+    }
+
+    .date-btn.selected .day-name { color: #c8e8a0; }
+
+    .time-slots {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-bottom: 16px;
+      display: none;
+    }
+
+    .time-slots.visible { display: flex; }
+
+    .time-btn {
+      font-family: Georgia, serif;
+      border: 2px solid #c8a96e;
+      border-radius: 8px;
+      background: white;
+      color: #5a4030;
+      padding: 7px 16px;
+      cursor: pointer;
+      transition: all 0.15s;
+      font-size: 0.88rem;
+    }
+
+    .time-btn:hover {
+      border-color: #4a7c2f;
+      background: #f0f8e8;
+      color: #2d5016;
+    }
+
+    .time-btn.selected {
+      border-color: #2d5016;
+      background: #4a7c2f;
+      color: white;
+    }
+
+    .book-btn {
+      display: block;
+      width: 100%;
+      font-family: Georgia, serif;
+      font-size: 1rem;
+      padding: 13px;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: all 0.15s;
+      font-weight: bold;
+      letter-spacing: 0.5px;
+    }
+
+    .book-btn.ready {
+      background: linear-gradient(135deg, #2d5016, #4a7c2f);
+      color: white;
+      box-shadow: 0 4px 12px rgba(45,80,22,0.3);
+    }
+
+    .book-btn.ready:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 18px rgba(45,80,22,0.4);
+    }
+
+    .book-btn.disabled {
+      background: #e8d9b8;
+      color: #9a8060;
+      cursor: default;
+    }
+
+    /* ── Modal ── */
+    .modal-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(30,20,10,0.65);
+      z-index: 100;
+      align-items: center;
+      justify-content: center;
+      padding: 16px;
+    }
+
+    .modal-overlay.open { display: flex; }
+
+    .modal {
+      background: #fffdf8;
+      border-radius: 20px;
+      max-width: 480px;
+      width: 100%;
+      padding: 32px 28px 28px;
+      box-shadow: 0 16px 60px rgba(0,0,0,0.35);
+      border: 1px solid #d9c49a;
+      animation: modal-in 0.25s ease;
+    }
+
+    @keyframes modal-in {
+      from { transform: scale(0.93); opacity: 0; }
+      to   { transform: scale(1);    opacity: 1; }
+    }
+
+    .modal-icon { font-size: 3rem; text-align: center; margin-bottom: 12px; }
+
+    .modal h2 {
+      font-size: 1.4rem;
+      text-align: center;
+      color: #2d1f0e;
+      margin-bottom: 6px;
+    }
+
+    .modal .modal-sub {
+      text-align: center;
+      font-size: 0.88rem;
+      color: #7a6040;
+      margin-bottom: 22px;
+      font-style: italic;
+    }
+
+    .booking-summary {
+      background: #f5ede0;
+      border-radius: 12px;
+      padding: 16px 18px;
+      margin-bottom: 18px;
+      border: 1px solid #d9c49a;
+    }
+
+    .summary-row {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.9rem;
+      padding: 5px 0;
+      border-bottom: 1px dashed #d9c49a;
+    }
+
+    .summary-row:last-child { border-bottom: none; }
+    .summary-row .label { color: #7a6040; }
+    .summary-row .value { color: #2d1f0e; font-weight: bold; }
+    .summary-row.total .value { color: #2d5016; font-size: 1.05rem; }
+
+    .season-note {
+      background: #fef9e7;
+      border: 1px solid #d4ac3a;
+      border-radius: 10px;
+      padding: 10px 14px;
+      font-size: 0.82rem;
+      color: #7a5c00;
+      margin-bottom: 18px;
+      line-height: 1.5;
+    }
+
+    .modal-links {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      margin-bottom: 16px;
+    }
+
+    .ext-link {
+      display: block;
+      text-align: center;
+      padding: 11px;
+      border-radius: 10px;
+      font-size: 0.92rem;
+      font-family: Georgia, serif;
+      cursor: pointer;
+      text-decoration: none;
+      transition: all 0.15s;
+      font-weight: bold;
+    }
+
+    .ext-link.primary {
+      background: linear-gradient(135deg, #2d5016, #4a7c2f);
+      color: white;
+      box-shadow: 0 3px 10px rgba(45,80,22,0.25);
+    }
+
+    .ext-link.primary:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 5px 16px rgba(45,80,22,0.35);
+    }
+
+    .ext-link.secondary {
+      background: white;
+      color: #2d5016;
+      border: 2px solid #4a7c2f;
+    }
+
+    .ext-link.secondary:hover { background: #f0f8e8; }
+
+    .modal-close {
+      display: block;
+      width: 100%;
+      font-family: Georgia, serif;
+      font-size: 0.88rem;
+      padding: 9px;
+      border: 1px solid #c8a96e;
+      border-radius: 8px;
+      background: transparent;
+      color: #7a6040;
+      cursor: pointer;
+    }
+
+    .modal-close:hover { background: #f5ede0; }
+
+    /* ── Footer ── */
+    .footer {
+      text-align: center;
+      padding: 20px;
+      font-size: 0.78rem;
+      color: #9a8060;
+      font-style: italic;
+    }
+
+    /* ── Responsive ── */
+    @media (max-width: 600px) {
+      .header h1 { font-size: 1.45rem; }
+      .card-main { padding: 16px; }
+      .card-top { flex-direction: column; }
+      .price-block { text-align: left; }
+      .date-btn { padding: 6px 11px; }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="header">
+    <div class="kanji">茶道　着物</div>
+    <h1>Private Tea Ceremony &amp; Kimono — Kyoto</h1>
+    <p>Exclusive private experiences for your family of four</p>
+  </div>
+
+  <div class="search-bar">
+    <div class="search-pill"><span class="icon">👨‍👩‍👧‍👦</span> Family of 4</div>
+    <div class="search-pill"><span class="icon">📅</span> Apr 11–14, 2026</div>
+    <div class="search-pill"><span class="icon">👘</span> Kimono Included</div>
+    <div class="search-pill"><span class="icon">🔒</span> Private Session</div>
+    <div class="search-note">⚡ April is peak cherry blossom season — availability is limited. Book soon.</div>
+  </div>
+
+  <div class="listings">
+    <p class="results-heading">4 private experiences found in Kyoto</p>
+  </div>
+
+  <!-- Confirmation Modal -->
+  <div class="modal-overlay" id="modal">
+    <div class="modal">
+      <div class="modal-icon">🍵</div>
+      <h2>Confirm Your Booking</h2>
+      <p class="modal-sub">Review your details before proceeding to the venue's booking page</p>
+
+      <div class="booking-summary" id="modal-summary"></div>
+
+      <div class="season-note">
+        ⚠️ <strong>Peak season alert:</strong> April is cherry blossom season in Kyoto —
+        one of the busiest times of year. Complete your booking on the venue's site immediately
+        to secure this slot.
+      </div>
+
+      <div class="modal-links" id="modal-links"></div>
+
+      <button class="modal-close" onclick="closeModal()">← Go back to results</button>
+    </div>
+  </div>
+
+  <footer class="footer">
+    Availability and pricing are indicative. Confirm directly with each venue. Prices shown in JPY; USD approx. at ¥150/$1.
+  </footer>
+
+  <script>
+    const venues = [
+      {
+        id: 'maikoya',
+        name: 'MAIKOYA Gion Kiyomizu',
+        location: 'Gion district, near Kiyomizudera Temple',
+        accentColor: '#4a7c2f',
+        priceJPY: 52000,
+        priceUSD: 346,
+        duration: '90 min',
+        availDates: ['Apr 11', 'Apr 12', 'Apr 13', 'Apr 14'],
+        availDays:  ['Sat', 'Sun', 'Mon', 'Tue'],
+        badges: [
+          { text: '★ 1,000+ Reviews', cls: 'badge-gold' },
+          { text: 'TripAdvisor Choice', cls: 'badge-gold' },
+          { text: 'Private', cls: 'badge-green' },
+        ],
+        highlights: [
+          'Urasenke-trained tea masters',
+          'Antique kimono selection',
+          'Hair styling included',
+          'English-speaking staff',
+          'Up to 20 guests',
+          'Photo session',
+        ],
+        links: {
+          primary: { label: 'Book on MAIKOYA Official', url: 'https://mai-ko.com/culture/tea-ceremony/' },
+          secondary: { label: 'View on Viator', url: 'https://www.viator.com/tours/Kyoto/Experience-Tea-Ceremony-wearing-a-Kimono-in-Kyoto/d332-51440P61' },
+        },
+      },
+      {
+        id: 'nagomi',
+        name: 'Tea Ceremony Kyoto Nagomi',
+        location: 'Central Kyoto, near Nijo Castle',
+        accentColor: '#b8860b',
+        priceJPY: 38400,
+        priceUSD: 256,
+        duration: '75 min',
+        availDates: ['Apr 11', 'Apr 13', 'Apr 14'],
+        availDays:  ['Sat', 'Mon', 'Tue'],
+        badges: [
+          { text: 'Family Friendly', cls: 'badge-green' },
+          { text: "Children's Rates", cls: 'badge-gold' },
+          { text: 'Private', cls: 'badge-green' },
+        ],
+        highlights: [
+          'Special child rate (under 19)',
+          'Seated tatami room',
+          'Traditional wagashi sweets',
+          'Kimono dressing & sash',
+          'Flexible group size',
+          'English guidance',
+        ],
+        links: {
+          primary: { label: 'Book on Kyoto Nagomi Official', url: 'https://kyoto-nagomi-tea.com/' },
+          secondary: { label: 'View on GetYourGuide', url: 'https://www.getyourguide.com/kyoto-l96826/tea-ceremonies-tc1115/' },
+        },
+      },
+      {
+        id: 'en',
+        name: 'En Kyoto — Yumeyakata',
+        location: 'Higashiyama district, 100-year-old machiya house',
+        accentColor: '#8b3a3a',
+        priceJPY: 72000,
+        priceUSD: 480,
+        duration: '120 min',
+        availDates: ['Apr 12', 'Apr 14'],
+        availDays:  ['Sun', 'Tue'],
+        badges: [
+          { text: 'Premium', cls: 'badge-gold' },
+          { text: 'Machiya House', cls: 'badge-blue' },
+          { text: 'Private', cls: 'badge-green' },
+        ],
+        highlights: [
+          '100-year-old townhouse setting',
+          'Antique kimono (80+ years old)',
+          'Authentic Urasenke ceremony',
+          'Garden tea room',
+          'Matcha & seasonal sweets',
+          'Professional photography',
+        ],
+        links: {
+          primary: { label: 'Book on En Kyoto Official', url: 'https://www.en-kyoto.yumeyakata.com/teaexperience/' },
+          secondary: { label: 'View on Viator', url: 'https://www.viator.com/tours/Kyoto/' },
+        },
+      },
+      {
+        id: 'authentic',
+        name: 'Authentic Tea Kyoto',
+        location: 'Arashiyama / Sagano, bamboo grove area',
+        accentColor: '#2d5080',
+        priceJPY: 44000,
+        priceUSD: 293,
+        duration: '90 min',
+        availDates: ['Apr 11', 'Apr 12', 'Apr 14'],
+        availDays:  ['Sat', 'Sun', 'Tue'],
+        badges: [
+          { text: 'English Hosts', cls: 'badge-blue' },
+          { text: 'Flexible Times', cls: 'badge-gold' },
+          { text: 'Private', cls: 'badge-green' },
+        ],
+        highlights: [
+          'Native English-speaking hosts',
+          'Seasonal kimono collection',
+          'Near bamboo grove',
+          'Pre-booking consultation',
+          'Dietary needs accommodated',
+          'Custom time slots',
+        ],
+        links: {
+          primary: { label: 'Book on Authentic Tea Kyoto', url: 'https://tea-kyoto.com/' },
+          secondary: { label: 'View on GetYourGuide', url: 'https://www.getyourguide.com/kyoto-l96826/tea-ceremonies-tc1115/' },
+        },
+      },
+    ];
+
+    const timeSlotsAll = ['10:00 AM', '1:00 PM', '3:30 PM'];
+
+    // State per card
+    const state = {};
+
+    function buildCards() {
+      const container = document.querySelector('.listings');
+
+      venues.forEach(v => {
+        state[v.id] = { date: null, time: null };
+
+        const card = document.createElement('div');
+        card.className = 'card';
+        card.innerHTML = `
+          <div class="card-header">
+            <div class="card-accent" style="background:${v.accentColor}"></div>
+            <div class="card-main">
+              <div class="card-top">
+                <div>
+                  <div class="venue-name">${v.name}</div>
+                  <div class="venue-location">📍 ${v.location}</div>
+                </div>
+                <div class="price-block">
+                  <div class="price-jpy">¥${v.priceJPY.toLocaleString()}</div>
+                  <div class="price-usd">~$${v.priceUSD}</div>
+                  <div class="price-label">for 4 people</div>
+                </div>
+              </div>
+
+              <div class="badges">
+                ${v.badges.map(b => `<span class="badge ${b.cls}">${b.text}</span>`).join('')}
+                <span class="badge badge-gold">⏱ ${v.duration}</span>
+              </div>
+
+              <div class="highlights">
+                <ul>
+                  ${v.highlights.map(h => `<li>${h}</li>`).join('')}
+                </ul>
+              </div>
+
+              <div class="avail-section">
+                <div class="avail-label">Available dates (Apr 11–14)</div>
+                <div class="date-grid" id="dates-${v.id}">
+                  ${v.availDates.map((d, i) => `
+                    <button class="date-btn" onclick="selectDate('${v.id}', '${d}', this)">
+                      <span class="day-num">${d.split(' ')[1]}</span>
+                      <span class="day-name">${v.availDays[i]}</span>
+                    </button>
+                  `).join('')}
+                </div>
+
+                <div class="time-slots" id="times-${v.id}">
+                  ${timeSlotsAll.map(t => `
+                    <button class="time-btn" onclick="selectTime('${v.id}', '${t}', this)">${t}</button>
+                  `).join('')}
+                </div>
+
+                <button class="book-btn disabled" id="book-${v.id}"
+                  onclick="openModal('${v.id}')">
+                  Select a date &amp; time to continue
+                </button>
+              </div>
+            </div>
+          </div>
+        `;
+        container.appendChild(card);
+      });
+    }
+
+    function selectDate(venueId, date, el) {
+      state[venueId].date = date;
+      state[venueId].time = null;
+
+      // Update date button styles
+      document.querySelectorAll(`#dates-${venueId} .date-btn`).forEach(b => b.classList.remove('selected'));
+      el.classList.add('selected');
+
+      // Show time slots, clear selection
+      const timesEl = document.getElementById(`times-${venueId}`);
+      timesEl.classList.add('visible');
+      timesEl.querySelectorAll('.time-btn').forEach(b => b.classList.remove('selected'));
+
+      updateBookBtn(venueId);
+    }
+
+    function selectTime(venueId, time, el) {
+      state[venueId].time = time;
+
+      document.querySelectorAll(`#times-${venueId} .time-btn`).forEach(b => b.classList.remove('selected'));
+      el.classList.add('selected');
+
+      updateBookBtn(venueId);
+    }
+
+    function updateBookBtn(venueId) {
+      const btn = document.getElementById(`book-${venueId}`);
+      const s = state[venueId];
+
+      if (s.date && s.time) {
+        btn.className = 'book-btn ready';
+        btn.textContent = `Book Now — ${s.date} at ${s.time}`;
+      } else if (s.date) {
+        btn.className = 'book-btn disabled';
+        btn.textContent = 'Select a time to continue';
+      } else {
+        btn.className = 'book-btn disabled';
+        btn.textContent = 'Select a date & time to continue';
+      }
+    }
+
+    function openModal(venueId) {
+      const s = state[venueId];
+      if (!s.date || !s.time) return;
+
+      const v = venues.find(x => x.id === venueId);
+
+      document.getElementById('modal-summary').innerHTML = `
+        <div class="summary-row"><span class="label">Venue</span><span class="value">${v.name}</span></div>
+        <div class="summary-row"><span class="label">Date</span><span class="value">${s.date}, 2026</span></div>
+        <div class="summary-row"><span class="label">Time</span><span class="value">${s.time}</span></div>
+        <div class="summary-row"><span class="label">Duration</span><span class="value">${v.duration}</span></div>
+        <div class="summary-row"><span class="label">Guests</span><span class="value">4 people (private)</span></div>
+        <div class="summary-row"><span class="label">Includes</span><span class="value">Kimono + Tea Ceremony</span></div>
+        <div class="summary-row total"><span class="label">Total</span><span class="value">¥${v.priceJPY.toLocaleString()} (~$${v.priceUSD})</span></div>
+      `;
+
+      document.getElementById('modal-links').innerHTML = `
+        <a class="ext-link primary" href="${v.links.primary.url}" target="_blank" rel="noopener">${v.links.primary.label} →</a>
+        <a class="ext-link secondary" href="${v.links.secondary.url}" target="_blank" rel="noopener">${v.links.secondary.label}</a>
+      `;
+
+      document.getElementById('modal').classList.add('open');
+    }
+
+    function closeModal() {
+      document.getElementById('modal').classList.remove('open');
+    }
+
+    // Close modal on overlay click
+    document.getElementById('modal').addEventListener('click', function(e) {
+      if (e.target === this) closeModal();
+    });
+
+    buildCards();
+  </script>
+</body>
+</html>
