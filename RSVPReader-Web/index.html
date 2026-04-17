@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>RSVP Reader</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- ── Library View ── -->
+  <div id="library-view" class="view">
+    <header class="header">
+      <h1>RSVP Reader</h1>
+      <button id="load-btn" class="btn-primary">+ Load PDF</button>
+    </header>
+    <main id="library-main">
+      <div id="drop-zone" class="drop-zone">
+        <div class="drop-icon">📄</div>
+        <h3>Drop a PDF here</h3>
+        <p>or click to browse your files</p>
+      </div>
+      <div id="session-list" class="session-list hidden"></div>
+    </main>
+    <input type="file" id="file-input" accept=".pdf" hidden>
+  </div>
+
+  <!-- ── Reader View ── -->
+  <div id="reader-view" class="view hidden">
+    <header class="reader-header">
+      <button id="back-btn" class="btn-back">&#8592; Library</button>
+      <span id="reader-title" class="reader-title"></span>
+    </header>
+
+    <div class="progress-section">
+      <div class="progress-track" id="progress-track" title="Click to seek">
+        <div id="progress-fill" class="progress-fill"></div>
+      </div>
+      <span id="progress-text" class="progress-text">0 / 0</span>
+    </div>
+
+    <div class="word-stage">
+      <div id="loading-state" class="state-panel">
+        <div class="spinner"></div>
+        <p>Extracting text&hellip;</p>
+      </div>
+
+      <div id="word-display" class="word-display hidden">
+        <div class="focus-line"></div>
+        <div class="word-row">
+          <span id="word-before" class="word-seg seg-before"></span>
+          <span id="word-pivot" class="word-seg seg-pivot"></span>
+          <span id="word-after"  class="word-seg seg-after"></span>
+        </div>
+      </div>
+
+      <div id="finished-state" class="state-panel hidden">
+        <div class="big-check">✓</div>
+        <p class="finished-label">Finished!</p>
+        <button id="restart-btn" class="btn-primary">Read Again</button>
+      </div>
+
+      <div id="error-state" class="state-panel hidden">
+        <div class="error-icon">⚠</div>
+        <p id="error-msg" class="error-msg"></p>
+        <button id="back-from-error" class="btn-secondary">Go Back</button>
+      </div>
+    </div>
+
+    <div class="controls">
+      <div class="wpm-row">
+        <button id="wpm-down" class="btn-round" title="Slower (↓)">−</button>
+        <div class="wpm-display">
+          <span id="wpm-value">250</span>
+          <span class="wpm-label">WPM</span>
+        </div>
+        <button id="wpm-up" class="btn-round" title="Faster (↑)">+</button>
+      </div>
+
+      <div class="playback-row">
+        <button id="skip-back" class="btn-skip" title="Back 10 words (←)">
+          <span class="skip-icon">⏮</span>
+          <span class="skip-label">&minus;10</span>
+        </button>
+        <button id="play-pause" class="btn-play" title="Play / Pause (Space)" disabled>▶</button>
+        <button id="skip-fwd" class="btn-skip" title="Forward 10 words (→)">
+          <span class="skip-label">+10</span>
+          <span class="skip-icon">⏭</span>
+        </button>
+      </div>
+
+      <p class="hint">Space&nbsp;·&nbsp;play/pause &nbsp;·&nbsp; ←/→&nbsp;skip &nbsp;·&nbsp; ↑/↓&nbsp;speed</p>
+    </div>
+  </div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
