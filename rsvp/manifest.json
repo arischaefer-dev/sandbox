@@ -1,0 +1,19 @@
+{
+  "name": "RSVP Reader",
+  "short_name": "RSVP",
+  "description": "Read PDFs word-by-word with Rapid Serial Visual Presentation",
+  "start_url": "/sandbox/rsvp/",
+  "scope": "/sandbox/rsvp/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#ffffff",
+  "theme_color": "#2563eb",
+  "icons": [
+    {
+      "src": "icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    }
+  ]
+}
