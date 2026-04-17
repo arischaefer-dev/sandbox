@@ -20,14 +20,10 @@ There are no linters, test frameworks, or build tools configured. The entire app
 
 ### Railway deployment
 
-The app is deployed on Railway at **https://kids-math-game-production.up.railway.app** using a `Dockerfile` (nginx:alpine). To deploy:
+The app is deployed on Railway using a `Dockerfile` (nginx:alpine). To deploy, set your Railway account-level token as `RAILWAY_API_TOKEN` and run:
 
 ```
-unset RAILWAY_TOKEN
-export RAILWAY_API_TOKEN="<token>"
 railway up
 ```
-
-**Gotcha:** The secret is injected as `RAILWAY_TOKEN`, but the Railway CLI treats that as a *project-level* token. Account-level tokens must be set as `RAILWAY_API_TOKEN`. You must `unset RAILWAY_TOKEN` and `export RAILWAY_API_TOKEN="$RAILWAY_TOKEN"` before running Railway CLI commands, or auth will fail with "Unauthorized".
 
 The `nginx.conf.template` dynamically binds to Railway's `$PORT` environment variable.
