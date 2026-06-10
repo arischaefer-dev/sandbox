@@ -3,338 +3,1200 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <link rel="manifest" href="/manifest.json" />
-  <meta name="theme-color" content="#e05a6f" />
-  <title>Math Fun for Kids!</title>
+  <title>MRI Results Viewer</title>
   <style>
-    * { box-sizing: border-box; margin: 0; padding: 0; }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #0d0f12;
+      --panel: #141820;
+      --border: #2a2f3e;
+      --accent: #4a9eff;
+      --accent2: #7c5cfc;
+      --text: #e2e8f0;
+      --text-dim: #64748b;
+      --text-muted: #94a3b8;
+      --ok: #22c55e;
+      --warn: #f59e0b;
+      --danger: #ef4444;
+      --slider-thumb: #4a9eff;
+    }
 
     body {
-      font-family: 'Comic Sans MS', 'Chalkboard SE', cursive;
-      background: linear-gradient(135deg, #ff9a9e 0%, #fad0c4 50%, #ffecd2 100%);
-      min-height: 100vh;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      padding: 20px;
-    }
-
-    h1 {
-      font-size: 2.8rem;
-      color: #fff;
-      text-shadow: 3px 3px 0 #e05a6f, -1px -1px 0 #e05a6f;
-      margin-bottom: 10px;
-      text-align: center;
-    }
-
-    .score-bar {
-      display: flex;
-      gap: 30px;
-      background: rgba(255,255,255,0.85);
-      border-radius: 50px;
-      padding: 10px 30px;
-      margin-bottom: 24px;
-      font-size: 1.2rem;
-      color: #555;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-    }
-
-    .score-bar span { font-weight: bold; color: #e05a6f; }
-
-    .game-card {
-      background: white;
-      border-radius: 28px;
-      padding: 40px 50px;
-      box-shadow: 0 8px 32px rgba(0,0,0,0.15);
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 24px;
-      max-width: 460px;
-      width: 100%;
-    }
-
-    .emoji-mascot {
-      font-size: 5rem;
-      animation: bounce 1.5s infinite;
-    }
-
-    @keyframes bounce {
-      0%, 100% { transform: translateY(0); }
-      50% { transform: translateY(-12px); }
-    }
-
-    .question {
-      font-size: 2.8rem;
-      color: #333;
-      text-align: center;
-      min-height: 60px;
-    }
-
-    .answers {
+      font-family: 'Segoe UI', system-ui, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      height: 100vh;
       display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 14px;
-      width: 100%;
+      grid-template-rows: 52px 1fr;
+      overflow: hidden;
     }
 
-    .answer-btn {
-      font-family: inherit;
-      font-size: 2rem;
-      padding: 18px 10px;
-      border: none;
-      border-radius: 18px;
-      cursor: pointer;
-      transition: transform 0.1s, box-shadow 0.1s;
-      box-shadow: 0 4px 0 rgba(0,0,0,0.15);
-      font-weight: bold;
-      color: white;
-    }
-
-    .answer-btn:nth-child(1) { background: #f8a5c2; }
-    .answer-btn:nth-child(2) { background: #78e08f; }
-    .answer-btn:nth-child(3) { background: #74b9ff; }
-    .answer-btn:nth-child(4) { background: #fdcb6e; }
-
-    .answer-btn:hover { transform: translateY(-3px); box-shadow: 0 7px 0 rgba(0,0,0,0.15); }
-    .answer-btn:active { transform: translateY(2px); box-shadow: 0 2px 0 rgba(0,0,0,0.15); }
-
-    .answer-btn.correct {
-      background: #00b894 !important;
-      animation: pop 0.4s ease;
-    }
-
-    .answer-btn.wrong {
-      background: #d63031 !important;
-      animation: shake 0.4s ease;
-    }
-
-    @keyframes pop {
-      0% { transform: scale(1); }
-      50% { transform: scale(1.2); }
-      100% { transform: scale(1); }
-    }
-
-    @keyframes shake {
-      0%, 100% { transform: translateX(0); }
-      25% { transform: translateX(-8px); }
-      75% { transform: translateX(8px); }
-    }
-
-    .feedback {
-      font-size: 1.6rem;
-      min-height: 40px;
-      text-align: center;
-      font-weight: bold;
-    }
-
-    .feedback.correct { color: #00b894; }
-    .feedback.wrong   { color: #d63031; }
-
-    .level-select {
+    /* ── HEADER ── */
+    header {
+      background: var(--panel);
+      border-bottom: 1px solid var(--border);
       display: flex;
-      gap: 10px;
-      flex-wrap: wrap;
-      justify-content: center;
+      align-items: center;
+      padding: 0 20px;
+      gap: 20px;
+      z-index: 10;
     }
 
-    .level-btn {
-      font-family: inherit;
-      font-size: 1rem;
-      padding: 8px 20px;
-      border: 3px solid #e05a6f;
-      border-radius: 50px;
-      background: white;
-      color: #e05a6f;
+    .logo {
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: var(--accent);
+      letter-spacing: 0.5px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .logo svg { width: 22px; height: 22px; }
+
+    .patient-info {
+      display: flex;
+      gap: 24px;
+      font-size: 0.78rem;
+      color: var(--text-muted);
+      flex: 1;
+    }
+
+    .patient-info strong { color: var(--text); }
+
+    .header-actions { display: flex; gap: 10px; margin-left: auto; }
+
+    .btn {
+      padding: 6px 14px;
+      border-radius: 6px;
+      border: 1px solid var(--border);
+      background: #1e2435;
+      color: var(--text);
+      font-size: 0.78rem;
       cursor: pointer;
-      font-weight: bold;
+      transition: background 0.15s, border-color 0.15s;
+    }
+    .btn:hover { background: #2a3049; border-color: var(--accent); }
+    .btn.primary { background: var(--accent); border-color: var(--accent); color: #fff; }
+    .btn.primary:hover { background: #3a8eef; }
+
+    /* ── LAYOUT ── */
+    .workspace {
+      display: grid;
+      grid-template-columns: 240px 1fr 300px;
+      overflow: hidden;
+    }
+
+    /* ── SIDEBAR ── */
+    .sidebar {
+      background: var(--panel);
+      border-right: 1px solid var(--border);
+      display: flex;
+      flex-direction: column;
+      overflow-y: auto;
+    }
+
+    .sidebar-section {
+      padding: 14px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .sidebar-section h3 {
+      font-size: 0.7rem;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: var(--text-dim);
+      margin-bottom: 10px;
+    }
+
+    .series-list { display: flex; flex-direction: column; gap: 6px; }
+
+    .series-item {
+      padding: 8px 10px;
+      border-radius: 6px;
+      border: 1px solid var(--border);
+      cursor: pointer;
+      transition: all 0.15s;
+      background: #1a1f2e;
+    }
+
+    .series-item:hover { border-color: var(--accent); }
+    .series-item.active { border-color: var(--accent); background: rgba(74,158,255,0.08); }
+
+    .series-item .series-name { font-size: 0.82rem; font-weight: 600; }
+    .series-item .series-meta { font-size: 0.72rem; color: var(--text-dim); margin-top: 2px; }
+
+    .series-thumb {
+      width: 100%;
+      height: 60px;
+      border-radius: 4px;
+      margin-top: 6px;
+      background: #000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+    }
+
+    .series-thumb canvas { width: 100%; height: 100%; }
+
+    /* window/level controls */
+    .control-row {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .control-label {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      margin-bottom: 3px;
+    }
+
+    .control-label span { color: var(--text); font-weight: 600; }
+
+    input[type=range] {
+      width: 100%;
+      accent-color: var(--accent);
+      cursor: pointer;
+      height: 4px;
+    }
+
+    .preset-btns {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 5px;
+      margin-top: 6px;
+    }
+
+    .preset-btn {
+      padding: 3px 9px;
+      border-radius: 4px;
+      border: 1px solid var(--border);
+      background: #1a1f2e;
+      color: var(--text-muted);
+      font-size: 0.72rem;
+      cursor: pointer;
+    }
+    .preset-btn:hover, .preset-btn.active { border-color: var(--accent); color: var(--accent); }
+
+    /* ── VIEWPORT ── */
+    .viewport-area {
+      background: #080a0e;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+
+    .view-tabs {
+      display: flex;
+      background: var(--panel);
+      border-bottom: 1px solid var(--border);
+      padding: 0 16px;
+      gap: 4px;
+    }
+
+    .view-tab {
+      padding: 10px 16px;
+      font-size: 0.78rem;
+      color: var(--text-dim);
+      cursor: pointer;
+      border-bottom: 2px solid transparent;
       transition: all 0.15s;
     }
+    .view-tab:hover { color: var(--text); }
+    .view-tab.active { color: var(--accent); border-bottom-color: var(--accent); }
 
-    .level-btn.active, .level-btn:hover {
-      background: #e05a6f;
-      color: white;
+    .views-container {
+      flex: 1;
+      display: grid;
+      overflow: hidden;
+      position: relative;
     }
 
-    .stars {
-      font-size: 2rem;
-      letter-spacing: 4px;
-      min-height: 40px;
+    .views-container.single { grid-template-columns: 1fr; grid-template-rows: 1fr; }
+    .views-container.triple {
+      grid-template-columns: 1fr 1fr;
+      grid-template-rows: 1fr 1fr;
     }
+
+    .mri-view {
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      border: 1px solid var(--border);
+      background: #000;
+      overflow: hidden;
+    }
+
+    .view-label {
+      position: absolute;
+      top: 8px;
+      left: 10px;
+      font-size: 0.7rem;
+      color: var(--accent);
+      font-weight: 700;
+      letter-spacing: 1px;
+      z-index: 2;
+      text-shadow: 0 1px 3px rgba(0,0,0,0.9);
+    }
+
+    .view-canvas {
+      width: 100%;
+      height: 100%;
+      display: block;
+      cursor: crosshair;
+    }
+
+    .view-info {
+      position: absolute;
+      bottom: 8px;
+      left: 10px;
+      font-size: 0.65rem;
+      color: rgba(255,255,255,0.45);
+      z-index: 2;
+      line-height: 1.6;
+    }
+
+    .view-info-right {
+      position: absolute;
+      bottom: 8px;
+      right: 10px;
+      font-size: 0.65rem;
+      color: rgba(255,255,255,0.45);
+      z-index: 2;
+      text-align: right;
+      line-height: 1.6;
+    }
+
+    /* slice nav */
+    .slice-nav {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 8px 16px;
+      background: var(--panel);
+      border-top: 1px solid var(--border);
+    }
+
+    .slice-nav label { font-size: 0.75rem; color: var(--text-muted); white-space: nowrap; }
+    .slice-nav input[type=range] { flex: 1; }
+    .slice-nav .slice-num { font-size: 0.75rem; color: var(--text); min-width: 50px; text-align: right; }
+
+    .nav-btn {
+      width: 28px;
+      height: 28px;
+      border-radius: 4px;
+      border: 1px solid var(--border);
+      background: #1e2435;
+      color: var(--text);
+      font-size: 1rem;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .nav-btn:hover { background: #2a3049; }
+
+    /* ── REPORT PANEL ── */
+    .report-panel {
+      background: var(--panel);
+      border-left: 1px solid var(--border);
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+
+    .report-tabs {
+      display: flex;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .report-tab {
+      flex: 1;
+      padding: 11px 8px;
+      text-align: center;
+      font-size: 0.75rem;
+      color: var(--text-dim);
+      cursor: pointer;
+      border-bottom: 2px solid transparent;
+      transition: all 0.15s;
+    }
+    .report-tab:hover { color: var(--text); }
+    .report-tab.active { color: var(--accent); border-bottom-color: var(--accent); }
+
+    .report-content {
+      flex: 1;
+      overflow-y: auto;
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    .report-section h4 {
+      font-size: 0.72rem;
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+      color: var(--text-dim);
+      margin-bottom: 8px;
+    }
+
+    .finding-item {
+      padding: 10px 12px;
+      border-radius: 7px;
+      border: 1px solid var(--border);
+      background: #1a1f2e;
+      font-size: 0.8rem;
+      line-height: 1.5;
+    }
+
+    .finding-item .finding-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 5px;
+    }
+
+    .finding-item .finding-title { font-weight: 600; font-size: 0.82rem; }
+
+    .badge {
+      font-size: 0.65rem;
+      padding: 2px 7px;
+      border-radius: 20px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .badge-ok { background: rgba(34,197,94,0.15); color: var(--ok); }
+    .badge-warn { background: rgba(245,158,11,0.15); color: var(--warn); }
+    .badge-danger { background: rgba(239,68,68,0.15); color: var(--danger); }
+    .badge-info { background: rgba(74,158,255,0.15); color: var(--accent); }
+
+    .finding-desc { color: var(--text-muted); font-size: 0.78rem; }
+
+    .metric-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+    }
+
+    .metric-card {
+      background: #1a1f2e;
+      border: 1px solid var(--border);
+      border-radius: 7px;
+      padding: 10px;
+    }
+
+    .metric-card .metric-label { font-size: 0.67rem; color: var(--text-dim); text-transform: uppercase; letter-spacing: 0.5px; }
+    .metric-card .metric-value { font-size: 1.05rem; font-weight: 700; color: var(--text); margin-top: 3px; }
+    .metric-card .metric-unit { font-size: 0.65rem; color: var(--text-dim); }
+    .metric-card .metric-ref { font-size: 0.65rem; margin-top: 2px; }
+
+    .report-text {
+      font-size: 0.8rem;
+      line-height: 1.7;
+      color: var(--text-muted);
+      background: #1a1f2e;
+      border: 1px solid var(--border);
+      border-radius: 7px;
+      padding: 12px;
+    }
+
+    .report-text p { margin-bottom: 8px; }
+    .report-text p:last-child { margin-bottom: 0; }
+    .report-text strong { color: var(--text); }
+
+    .status-bar {
+      padding: 8px 16px;
+      border-top: 1px solid var(--border);
+      font-size: 0.72rem;
+      color: var(--text-dim);
+      display: flex;
+      gap: 16px;
+    }
+
+    .status-dot {
+      display: inline-block;
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      margin-right: 4px;
+      background: var(--ok);
+    }
+
+    /* scrollbar */
+    ::-webkit-scrollbar { width: 5px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+
+    /* upload overlay */
+    .upload-zone {
+      display: none;
+      position: absolute;
+      inset: 0;
+      background: rgba(0,0,0,0.85);
+      z-index: 50;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+      gap: 16px;
+      text-align: center;
+    }
+
+    .upload-zone.visible { display: flex; }
+
+    .upload-box {
+      border: 2px dashed var(--accent);
+      border-radius: 16px;
+      padding: 40px 60px;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    .upload-box:hover { background: rgba(74,158,255,0.06); }
+    .upload-icon { font-size: 3rem; margin-bottom: 12px; }
+    .upload-box h2 { font-size: 1.1rem; margin-bottom: 6px; }
+    .upload-box p { font-size: 0.82rem; color: var(--text-dim); }
   </style>
 </head>
 <body>
 
-  <h1>Math Fun! 🌟</h1>
-
-  <div class="score-bar">
-    <div>Score: <span id="score">0</span></div>
-    <div>Streak: <span id="streak">0</span> 🔥</div>
-    <div>Level: <span id="level-label">Easy</span></div>
+<!-- HEADER -->
+<header>
+  <div class="logo">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+      <circle cx="12" cy="12" r="10"/>
+      <ellipse cx="12" cy="12" rx="5" ry="8"/>
+      <line x1="2" y1="12" x2="22" y2="12"/>
+    </svg>
+    NeuroView MRI
   </div>
 
-  <div class="game-card">
-    <div class="emoji-mascot" id="mascot">🐱</div>
+  <div class="patient-info">
+    <div>Patient: <strong>Sample, Brain MRI</strong></div>
+    <div>DOB: <strong>1972-04-15</strong></div>
+    <div>Study Date: <strong>2026-06-10</strong></div>
+    <div>Accession: <strong>MRI-2026-00842</strong></div>
+    <div>Modality: <strong>MR 3T</strong></div>
+  </div>
 
-    <div class="level-select">
-      <button class="level-btn active" onclick="setLevel('easy')">Easy (+, –)</button>
-      <button class="level-btn" onclick="setLevel('medium')">Medium (×)</button>
-      <button class="level-btn" onclick="setLevel('hard')">Hard (÷)</button>
+  <div class="header-actions">
+    <button class="btn" onclick="document.getElementById('fileInput').click()">Upload DICOM/ZIP</button>
+    <button class="btn primary">Export Report</button>
+  </div>
+  <input type="file" id="fileInput" accept=".zip,.dcm,.nii,.nii.gz,image/*" multiple style="display:none" onchange="handleUpload(this)"/>
+</header>
+
+<!-- WORKSPACE -->
+<div class="workspace">
+
+  <!-- SIDEBAR -->
+  <div class="sidebar">
+    <div class="sidebar-section">
+      <h3>Series</h3>
+      <div class="series-list" id="seriesList"></div>
     </div>
 
-    <div class="question" id="question">Loading...</div>
+    <div class="sidebar-section">
+      <h3>Window / Level</h3>
+      <div class="control-row">
+        <div>
+          <div class="control-label">Window Width <span id="wwVal">400</span></div>
+          <input type="range" id="ww" min="1" max="4000" value="400" oninput="updateWL()"/>
+        </div>
+        <div>
+          <div class="control-label">Window Level <span id="wlVal">200</span></div>
+          <input type="range" id="wl" min="0" max="4000" value="200" oninput="updateWL()"/>
+        </div>
+        <div class="preset-btns">
+          <button class="preset-btn active" onclick="applyPreset('brain',this)">Brain</button>
+          <button class="preset-btn" onclick="applyPreset('bone',this)">Bone</button>
+          <button class="preset-btn" onclick="applyPreset('soft',this)">Soft Tissue</button>
+          <button class="preset-btn" onclick="applyPreset('flair',this)">FLAIR</button>
+        </div>
+      </div>
+    </div>
 
-    <div class="answers" id="answers"></div>
+    <div class="sidebar-section">
+      <h3>Tools</h3>
+      <div style="display:flex;flex-wrap:wrap;gap:5px;">
+        <button class="preset-btn active" id="toolPan" onclick="setTool('pan',this)">Pan</button>
+        <button class="preset-btn" id="toolZoom" onclick="setTool('zoom',this)">Zoom</button>
+        <button class="preset-btn" id="toolWL" onclick="setTool('wl',this)">W/L</button>
+        <button class="preset-btn" id="toolMeasure" onclick="setTool('measure',this)">Measure</button>
+        <button class="preset-btn" onclick="resetView()">Reset</button>
+      </div>
+    </div>
 
-    <div class="feedback" id="feedback"></div>
-
-    <div class="stars" id="stars"></div>
+    <div class="sidebar-section">
+      <h3>Orientation</h3>
+      <div style="display:flex;flex-wrap:wrap;gap:5px;">
+        <button class="preset-btn active" onclick="setOrientation('axial',this)">Axial</button>
+        <button class="preset-btn" onclick="setOrientation('sagittal',this)">Sagittal</button>
+        <button class="preset-btn" onclick="setOrientation('coronal',this)">Coronal</button>
+      </div>
+    </div>
   </div>
 
-  <script>
-    const mascots = ['🐱', '🐶', '🐸', '🦊', '🐼', '🐨', '🦁', '🐯', '🐮', '🐰'];
-    let score = 0;
-    let streak = 0;
-    let correctAnswer = 0;
-    let level = 'easy';
-    let locked = false;
+  <!-- VIEWPORT -->
+  <div class="viewport-area">
+    <div class="view-tabs">
+      <div class="view-tab active" onclick="setLayout('single',this)">Single</div>
+      <div class="view-tab" onclick="setLayout('triple',this)">Multi-planar</div>
+    </div>
 
-    function setLevel(l) {
-      level = l;
-      document.querySelectorAll('.level-btn').forEach(b => b.classList.remove('active'));
-      event.target.classList.add('active');
-      document.getElementById('level-label').textContent =
-        l === 'easy' ? 'Easy' : l === 'medium' ? 'Medium' : 'Hard';
-      newQuestion();
-    }
+    <div class="views-container single" id="viewsContainer">
+      <!-- canvases injected by JS -->
+    </div>
 
-    function rand(min, max) {
-      return Math.floor(Math.random() * (max - min + 1)) + min;
-    }
+    <div class="slice-nav">
+      <button class="nav-btn" onclick="stepSlice(-1)">&#8249;</button>
+      <label>Slice</label>
+      <input type="range" id="sliceSlider" min="0" max="49" value="25" oninput="setSlice(+this.value)"/>
+      <div class="slice-num" id="sliceNum">26 / 50</div>
+      <button class="nav-btn" onclick="stepSlice(1)">&#8250;</button>
+    </div>
+  </div>
 
-    function generateQuestion() {
-      let a, b, op, answer, questionText;
+  <!-- REPORT -->
+  <div class="report-panel">
+    <div class="report-tabs">
+      <div class="report-tab active" onclick="showTab('findings',this)">Findings</div>
+      <div class="report-tab" onclick="showTab('metrics',this)">Metrics</div>
+      <div class="report-tab" onclick="showTab('report',this)">Report</div>
+    </div>
 
-      if (level === 'easy') {
-        op = Math.random() < 0.5 ? '+' : '−';
-        a = rand(1, 10);
-        b = rand(1, 10);
-        if (op === '−') {
-          // keep answer positive
-          if (a < b) [a, b] = [b, a];
-          answer = a - b;
+    <div class="report-content" id="reportContent"></div>
+
+    <div class="status-bar">
+      <span><span class="status-dot"></span>Loaded</span>
+      <span>50 slices</span>
+      <span>0.9 × 0.9 × 1.0 mm</span>
+    </div>
+  </div>
+
+</div>
+
+<script>
+// ═══════════════════════════════════════════════
+// STATE
+// ═══════════════════════════════════════════════
+const state = {
+  series: 0,
+  slice: 25,
+  totalSlices: 50,
+  ww: 400,
+  wl: 200,
+  layout: 'single',
+  orientation: 'axial',
+  tool: 'pan',
+  zoom: 1,
+  panX: 0,
+  panY: 0,
+  dragging: false,
+  dragStart: null,
+  reportTab: 'findings',
+};
+
+const SERIES = [
+  { name: 'T1 MPRAGE', plane: 'axial', slices: 50, tr: '2300ms', te: '2.9ms', thick: '1.0mm', label: 'AX T1' },
+  { name: 'T2 FLAIR', plane: 'axial', slices: 50, tr: '9000ms', te: '90ms', thick: '5.0mm', label: 'AX FLAIR' },
+  { name: 'DWI', plane: 'axial', slices: 30, tr: '4000ms', te: '80ms', thick: '5.0mm', label: 'AX DWI' },
+  { name: 'T2 SAG', plane: 'sagittal', slices: 40, tr: '3000ms', te: '85ms', thick: '3.0mm', label: 'SAG T2' },
+];
+
+// ═══════════════════════════════════════════════
+// CANVAS / MRI RENDERER
+// ═══════════════════════════════════════════════
+
+// Noise helper (seeded via slice + series for reproducibility)
+function noise(x, y, seed) {
+  let n = Math.sin(x * 127.1 + y * 311.7 + seed * 74.3) * 43758.545;
+  return n - Math.floor(n);
+}
+
+function smoothNoise(x, y, seed, scale = 8) {
+  const xi = Math.floor(x / scale);
+  const yi = Math.floor(y / scale);
+  const fx = (x / scale) - xi;
+  const fy = (y / scale) - yi;
+  const n00 = noise(xi, yi, seed);
+  const n10 = noise(xi+1, yi, seed);
+  const n01 = noise(xi, yi+1, seed);
+  const n11 = noise(xi+1, yi+1, seed);
+  const ix0 = n00 + fx*(n10-n00);
+  const ix1 = n01 + fx*(n11-n01);
+  return ix0 + fy*(ix1-ix0);
+}
+
+function drawMRISlice(canvas, sliceIdx, seriesIdx, ww, wl, orientation) {
+  const ctx = canvas.getContext('2d');
+  const W = canvas.width;
+  const H = canvas.height;
+  const imgData = ctx.createImageData(W, H);
+  const data = imgData.data;
+
+  const cx = W / 2;
+  const cy = H / 2;
+
+  // Brain geometry parameters vary by orientation
+  const brainRx = orientation === 'sagittal' ? W * 0.34 : W * 0.38;
+  const brainRy = orientation === 'coronal' ? H * 0.42 : H * 0.36;
+
+  // Slice position as 0-1
+  const t = sliceIdx / (state.totalSlices - 1);
+  // Skull radius scales with slice position (brain-shaped envelope)
+  const envelopeScale = Math.sin(t * Math.PI);
+  const outerRx = brainRx * (0.5 + 0.55 * envelopeScale);
+  const outerRy = brainRy * (0.5 + 0.55 * envelopeScale);
+
+  // Series-specific look
+  const s = SERIES[seriesIdx];
+  const isFLAIR = s.name.includes('FLAIR');
+  const isDWI = s.name.includes('DWI');
+
+  const seed = seriesIdx * 1000 + sliceIdx;
+
+  for (let py = 0; py < H; py++) {
+    for (let px = 0; px < W; px++) {
+      const dx = (px - cx) / outerRx;
+      const dy = (py - cy) / outerRy;
+      const r = dx*dx + dy*dy;
+
+      let intensity = 0;
+
+      if (r < 1.0) {
+        // inside skull
+
+        // Skull itself (thin ring)
+        const skullThick = 0.05;
+        if (r > (1 - skullThick)) {
+          intensity = isFLAIR ? 220 : 180;
         } else {
-          answer = a + b;
+          // inner brain
+          const ir = Math.sqrt(r);
+
+          // Grey matter ring
+          const gmOuter = 0.88, gmInner = 0.78;
+          const isGM = ir > gmInner && ir < gmOuter;
+
+          // Ventricles (central, elliptical)
+          const vdx = (px - cx) / (outerRx * 0.22);
+          const vdy = (py - cy) / (outerRy * 0.18);
+          const vr = vdx*vdx + vdy*vdy;
+          const isVentricle = vr < 1.0 && envelopeScale > 0.4;
+
+          // White matter
+          const isWM = !isGM && !isVentricle && ir < gmInner;
+
+          // Texture noise
+          const texNoise = smoothNoise(px, py, seed, 6) * 0.15;
+
+          if (isDWI) {
+            if (isVentricle) intensity = 20 + texNoise * 30;
+            else if (isGM) intensity = 80 + texNoise * 40;
+            else if (isWM) intensity = 110 + texNoise * 35;
+            else intensity = 60;
+          } else if (isFLAIR) {
+            if (isVentricle) intensity = 15 + texNoise * 20;
+            else if (isGM) intensity = 130 + texNoise * 40;
+            else if (isWM) intensity = 90 + texNoise * 35;
+            else intensity = 70;
+          } else {
+            // T1
+            if (isVentricle) intensity = 20 + texNoise * 25;
+            else if (isGM) intensity = 90 + texNoise * 40;
+            else if (isWM) intensity = 160 + texNoise * 30;
+            else intensity = 40;
+          }
+
+          // Sulci: dark grooves in grey matter zone
+          if (isGM) {
+            const sulcNoise = smoothNoise(px, py, seed + 500, 4);
+            if (sulcNoise > 0.62) intensity *= 0.45;
+          }
+
+          // FLAIR: bright WM lesion (simulated)
+          if (isFLAIR && isWM && sliceIdx > 15 && sliceIdx < 30) {
+            const ldx = (px - cx * 1.15) / (outerRx * 0.08);
+            const ldy = (py - cy * 0.85) / (outerRy * 0.07);
+            if (ldx*ldx + ldy*ldy < 1.0) intensity = 230;
+          }
         }
-        questionText = `${a} ${op} ${b} = ?`;
-      } else if (level === 'medium') {
-        a = rand(2, 10);
-        b = rand(2, 10);
-        answer = a * b;
-        questionText = `${a} × ${b} = ?`;
-      } else {
-        b = rand(2, 10);
-        answer = rand(2, 10);
-        a = b * answer;
-        questionText = `${a} ÷ ${b} = ?`;
       }
 
-      return { questionText, answer };
-    }
+      // Apply window/level
+      const lo = wl - ww / 2;
+      const hi = wl + ww / 2;
+      const mapped = Math.round(((intensity * 16 - lo) / (hi - lo)) * 255);
+      const clamped = Math.max(0, Math.min(255, mapped));
 
-    function shuffle(arr) {
-      for (let i = arr.length - 1; i > 0; i--) {
-        const j = Math.floor(Math.random() * (i + 1));
-        [arr[i], arr[j]] = [arr[j], arr[i]];
+      const i = (py * W + px) * 4;
+      data[i] = clamped;
+      data[i+1] = clamped;
+      data[i+2] = isDWI ? Math.min(255, clamped * 1.05) : clamped;
+      data[i+3] = 255;
+    }
+  }
+
+  ctx.putImageData(imgData, 0, 0);
+
+  // Crosshair
+  ctx.strokeStyle = 'rgba(74,158,255,0.5)';
+  ctx.lineWidth = 1;
+  ctx.setLineDash([4, 4]);
+  ctx.beginPath();
+  ctx.moveTo(cx, 0); ctx.lineTo(cx, H);
+  ctx.moveTo(0, cy); ctx.lineTo(W, cy);
+  ctx.stroke();
+  ctx.setLineDash([]);
+}
+
+// ═══════════════════════════════════════════════
+// VIEW MANAGEMENT
+// ═══════════════════════════════════════════════
+
+function buildViews() {
+  const container = document.getElementById('viewsContainer');
+  container.innerHTML = '';
+
+  const configs = state.layout === 'single'
+    ? [{ orient: state.orientation, series: state.series }]
+    : [
+        { orient: 'axial', series: state.series },
+        { orient: 'sagittal', series: 3 },
+        { orient: 'coronal', series: state.series },
+        { orient: 'axial', series: 1 },
+      ];
+
+  configs.forEach((cfg, idx) => {
+    const view = document.createElement('div');
+    view.className = 'mri-view';
+
+    const label = document.createElement('div');
+    label.className = 'view-label';
+    label.textContent = cfg.orient.toUpperCase();
+
+    const canvas = document.createElement('canvas');
+    canvas.className = 'view-canvas';
+    canvas.dataset.orient = cfg.orient;
+    canvas.dataset.series = cfg.series;
+    canvas.dataset.viewIdx = idx;
+
+    const info = document.createElement('div');
+    info.className = 'view-info';
+    info.innerHTML = `${SERIES[cfg.series].name}<br>TR:${SERIES[cfg.series].tr} / TE:${SERIES[cfg.series].te}`;
+
+    const infoR = document.createElement('div');
+    infoR.className = 'view-info-right';
+    infoR.id = `viewInfoR_${idx}`;
+    infoR.innerHTML = `Slice: ${state.slice+1}/${state.totalSlices}`;
+
+    view.appendChild(label);
+    view.appendChild(canvas);
+    view.appendChild(info);
+    view.appendChild(infoR);
+    container.appendChild(view);
+
+    setupCanvasEvents(canvas);
+  });
+
+  renderAll();
+}
+
+function renderAll() {
+  document.querySelectorAll('.view-canvas').forEach(canvas => {
+    resizeCanvas(canvas);
+    const orient = canvas.dataset.orient;
+    const ser = +canvas.dataset.series;
+    const idx = +canvas.dataset.viewIdx;
+    drawMRISlice(canvas, state.slice, ser, state.ww, state.wl, orient);
+    const infoR = document.getElementById(`viewInfoR_${idx}`);
+    if (infoR) infoR.innerHTML = `Slice: ${state.slice+1}/${state.totalSlices}<br>${state.zoom.toFixed(1)}x`;
+  });
+}
+
+function resizeCanvas(canvas) {
+  const rect = canvas.parentElement.getBoundingClientRect();
+  if (canvas.width !== Math.round(rect.width) || canvas.height !== Math.round(rect.height)) {
+    canvas.width = Math.round(rect.width) || 400;
+    canvas.height = Math.round(rect.height) || 400;
+  }
+}
+
+// ═══════════════════════════════════════════════
+// SERIES THUMBNAILS
+// ═══════════════════════════════════════════════
+
+function buildSeriesList() {
+  const list = document.getElementById('seriesList');
+  list.innerHTML = '';
+  SERIES.forEach((s, i) => {
+    const item = document.createElement('div');
+    item.className = 'series-item' + (i === state.series ? ' active' : '');
+    item.onclick = () => selectSeries(i);
+
+    const thumb = document.createElement('div');
+    thumb.className = 'series-thumb';
+    const tc = document.createElement('canvas');
+    tc.width = 80; tc.height = 60;
+    thumb.appendChild(tc);
+
+    item.innerHTML = `
+      <div class="series-name">${s.name}</div>
+      <div class="series-meta">${s.slices} slices · ${s.thick}</div>
+    `;
+    item.appendChild(thumb);
+    list.appendChild(item);
+
+    // draw thumb
+    setTimeout(() => drawMRISlice(tc, 25, i, 400, 200, s.plane), 10);
+  });
+}
+
+function selectSeries(i) {
+  state.series = i;
+  state.totalSlices = SERIES[i].slices;
+  state.slice = Math.min(state.slice, state.totalSlices - 1);
+  document.getElementById('sliceSlider').max = state.totalSlices - 1;
+  document.getElementById('sliceSlider').value = state.slice;
+  updateSliceNum();
+  document.querySelectorAll('.series-item').forEach((el, idx) => {
+    el.classList.toggle('active', idx === i);
+  });
+  buildViews();
+}
+
+// ═══════════════════════════════════════════════
+// CONTROLS
+// ═══════════════════════════════════════════════
+
+function updateWL() {
+  state.ww = +document.getElementById('ww').value;
+  state.wl = +document.getElementById('wl').value;
+  document.getElementById('wwVal').textContent = state.ww;
+  document.getElementById('wlVal').textContent = state.wl;
+  renderAll();
+}
+
+function applyPreset(preset, btn) {
+  const presets = {
+    brain: [400, 200],
+    bone:  [2000, 400],
+    soft:  [350, 50],
+    flair: [600, 300],
+  };
+  const [ww, wl] = presets[preset];
+  document.getElementById('ww').value = ww;
+  document.getElementById('wl').value = wl;
+  document.querySelectorAll('.preset-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  state.ww = ww; state.wl = wl;
+  document.getElementById('wwVal').textContent = ww;
+  document.getElementById('wlVal').textContent = wl;
+  renderAll();
+}
+
+function setTool(tool, btn) {
+  state.tool = tool;
+  document.querySelectorAll('#toolPan, #toolZoom, #toolWL, #toolMeasure')
+    .forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+}
+
+function setLayout(layout, tab) {
+  state.layout = layout;
+  const container = document.getElementById('viewsContainer');
+  container.className = 'views-container ' + (layout === 'single' ? 'single' : 'triple');
+  document.querySelectorAll('.view-tab').forEach(t => t.classList.remove('active'));
+  tab.classList.add('active');
+  buildViews();
+}
+
+function setOrientation(orient, btn) {
+  state.orientation = orient;
+  document.querySelectorAll('.sidebar-section').forEach(s => {
+    s.querySelectorAll('.preset-btn').forEach(b => {
+      if (['axial','sagittal','coronal'].includes(b.textContent.toLowerCase())) {
+        b.classList.toggle('active', b.textContent.toLowerCase() === orient);
       }
-      return arr;
+    });
+  });
+  if (state.layout === 'single') buildViews();
+}
+
+function setSlice(val) {
+  state.slice = val;
+  updateSliceNum();
+  renderAll();
+}
+
+function stepSlice(delta) {
+  const next = Math.max(0, Math.min(state.totalSlices - 1, state.slice + delta));
+  state.slice = next;
+  document.getElementById('sliceSlider').value = next;
+  updateSliceNum();
+  renderAll();
+}
+
+function updateSliceNum() {
+  document.getElementById('sliceNum').textContent = `${state.slice+1} / ${state.totalSlices}`;
+}
+
+function resetView() {
+  state.zoom = 1; state.panX = 0; state.panY = 0;
+  renderAll();
+}
+
+// ═══════════════════════════════════════════════
+// CANVAS INTERACTION
+// ═══════════════════════════════════════════════
+
+function setupCanvasEvents(canvas) {
+  canvas.addEventListener('wheel', e => {
+    e.preventDefault();
+    if (state.tool === 'zoom') {
+      state.zoom = Math.max(0.5, Math.min(5, state.zoom * (e.deltaY < 0 ? 1.1 : 0.9)));
+    } else {
+      stepSlice(e.deltaY > 0 ? 1 : -1);
     }
+  }, { passive: false });
 
-    function newQuestion() {
-      locked = false;
-      document.getElementById('feedback').textContent = '';
-      document.getElementById('feedback').className = 'feedback';
+  canvas.addEventListener('mousedown', e => {
+    state.dragging = true;
+    state.dragStart = { x: e.clientX, y: e.clientY, ww: state.ww, wl: state.wl };
+  });
 
-      // Change mascot occasionally
-      if (Math.random() < 0.3) {
-        document.getElementById('mascot').textContent =
-          mascots[rand(0, mascots.length - 1)];
+  window.addEventListener('mousemove', e => {
+    if (!state.dragging) return;
+    const dx = e.clientX - state.dragStart.x;
+    const dy = e.clientY - state.dragStart.y;
+    if (state.tool === 'wl') {
+      state.ww = Math.max(1, state.dragStart.ww + dx * 4);
+      state.wl = Math.max(0, state.dragStart.wl - dy * 4);
+      document.getElementById('ww').value = state.ww;
+      document.getElementById('wl').value = state.wl;
+      document.getElementById('wwVal').textContent = Math.round(state.ww);
+      document.getElementById('wlVal').textContent = Math.round(state.wl);
+      renderAll();
+    }
+  });
+
+  window.addEventListener('mouseup', () => { state.dragging = false; });
+
+  canvas.addEventListener('keydown', e => {
+    if (e.key === 'ArrowRight' || e.key === 'ArrowDown') stepSlice(1);
+    if (e.key === 'ArrowLeft'  || e.key === 'ArrowUp')   stepSlice(-1);
+  });
+  canvas.setAttribute('tabindex', '0');
+}
+
+// ═══════════════════════════════════════════════
+// REPORT / FINDINGS
+// ═══════════════════════════════════════════════
+
+const REPORT_DATA = {
+  findings: `
+    <div class="report-section">
+      <h4>Key Findings</h4>
+      <div style="display:flex;flex-direction:column;gap:8px;">
+        <div class="finding-item">
+          <div class="finding-header">
+            <div class="finding-title">White Matter Hyperintensities</div>
+            <span class="badge badge-warn">Mild</span>
+          </div>
+          <div class="finding-desc">Small foci of T2/FLAIR signal hyperintensity in the periventricular and subcortical white matter, consistent with mild chronic small vessel ischemic changes (Fazekas grade 1).</div>
+        </div>
+        <div class="finding-item">
+          <div class="finding-header">
+            <div class="finding-title">Ventricles</div>
+            <span class="badge badge-ok">Normal</span>
+          </div>
+          <div class="finding-desc">Ventricles and sulci are normal in size and configuration for age. No hydrocephalus.</div>
+        </div>
+        <div class="finding-item">
+          <div class="finding-header">
+            <div class="finding-title">Cortical Structures</div>
+            <span class="badge badge-ok">Normal</span>
+          </div>
+          <div class="finding-desc">No acute infarct identified on DWI. Grey-white matter differentiation preserved. No mass lesion or midline shift.</div>
+        </div>
+        <div class="finding-item">
+          <div class="finding-header">
+            <div class="finding-title">Posterior Fossa</div>
+            <span class="badge badge-ok">Normal</span>
+          </div>
+          <div class="finding-desc">Cerebellum and brainstem are unremarkable. No tonsillar herniation.</div>
+        </div>
+        <div class="finding-item">
+          <div class="finding-header">
+            <div class="finding-title">Enhancement</div>
+            <span class="badge badge-info">Pending</span>
+          </div>
+          <div class="finding-desc">Post-contrast series not available in this study.</div>
+        </div>
+      </div>
+    </div>
+  `,
+  metrics: `
+    <div class="report-section">
+      <h4>Volumetric Analysis</h4>
+      <div class="metric-grid">
+        <div class="metric-card">
+          <div class="metric-label">Total Brain Vol.</div>
+          <div class="metric-value">1348 <span class="metric-unit">cm³</span></div>
+          <div class="metric-ref" style="color:var(--ok)">Within normal range</div>
+        </div>
+        <div class="metric-card">
+          <div class="metric-label">WMH Volume</div>
+          <div class="metric-value">3.2 <span class="metric-unit">cm³</span></div>
+          <div class="metric-ref" style="color:var(--warn)">Mild elevation</div>
+        </div>
+        <div class="metric-card">
+          <div class="metric-label">Grey Matter</div>
+          <div class="metric-value">684 <span class="metric-unit">cm³</span></div>
+          <div class="metric-ref" style="color:var(--ok)">Normal</div>
+        </div>
+        <div class="metric-card">
+          <div class="metric-label">White Matter</div>
+          <div class="metric-value">461 <span class="metric-unit">cm³</span></div>
+          <div class="metric-ref" style="color:var(--ok)">Normal</div>
+        </div>
+        <div class="metric-card">
+          <div class="metric-label">Ventricular Vol.</div>
+          <div class="metric-value">18.4 <span class="metric-unit">cm³</span></div>
+          <div class="metric-ref" style="color:var(--ok)">Normal</div>
+        </div>
+        <div class="metric-card">
+          <div class="metric-label">Brain-to-ICVol</div>
+          <div class="metric-value">87 <span class="metric-unit">%</span></div>
+          <div class="metric-ref" style="color:var(--ok)">Normal for age</div>
+        </div>
+      </div>
+    </div>
+    <div class="report-section">
+      <h4>Acquisition Parameters</h4>
+      <div class="finding-item finding-desc" style="font-size:0.78rem;line-height:1.8;">
+        Scanner: 3T Siemens Prisma<br>
+        Voxel size: 0.9 × 0.9 × 1.0 mm<br>
+        Matrix: 256 × 256<br>
+        Sequences: T1 MPRAGE, T2 FLAIR, DWI, T2 Sagittal
+      </div>
+    </div>
+  `,
+  report: `
+    <div class="report-section">
+      <h4>Clinical Report</h4>
+      <div class="report-text">
+        <p><strong>Indication:</strong> Headaches, cognitive evaluation.</p>
+        <p><strong>Technique:</strong> Multiplanar, multisequence MRI of the brain performed on a 3 Tesla scanner without intravenous contrast. Sequences include sagittal T1, axial T2 FLAIR, axial DWI/ADC, and axial T2 FSE.</p>
+        <p><strong>Brain Parenchyma:</strong> There is no acute infarction, hemorrhage, or diffusion restriction. Grey-white matter differentiation is preserved throughout. There are scattered punctate foci of T2/FLAIR hyperintensity in the periventricular and subcortical white matter, consistent with mild chronic microvascular disease (Fazekas 1).</p>
+        <p><strong>Ventricles and Cisterns:</strong> The ventricular system is normal in caliber. Cortical sulci are age-appropriate. No midline shift or herniation.</p>
+        <p><strong>Posterior Fossa:</strong> The cerebellum and brainstem appear unremarkable. The fourth ventricle is normal in position and size.</p>
+        <p><strong>Impression:</strong><br>
+        1. Mild periventricular and subcortical white matter signal changes consistent with chronic small vessel ischemic disease (Fazekas grade 1). Clinical correlation recommended.<br>
+        2. No acute intracranial abnormality identified.<br>
+        3. No mass lesion, midline shift, or hydrocephalus.</p>
+        <p style="margin-top:12px;color:var(--text-dim);font-size:0.72rem;">Radiologist: [Signature pending] · 2026-06-10 · MRI-2026-00842</p>
+      </div>
+    </div>
+  `
+};
+
+function showTab(tab, el) {
+  state.reportTab = tab;
+  document.querySelectorAll('.report-tab').forEach(t => t.classList.remove('active'));
+  el.classList.add('active');
+  document.getElementById('reportContent').innerHTML = REPORT_DATA[tab];
+}
+
+// ═══════════════════════════════════════════════
+// FILE UPLOAD (real images)
+// ═══════════════════════════════════════════════
+
+function handleUpload(input) {
+  const files = Array.from(input.files);
+  const imageFiles = files.filter(f => f.type.startsWith('image/'));
+  if (imageFiles.length === 0) return;
+
+  imageFiles.sort((a,b) => a.name.localeCompare(b.name));
+  state.uploadedImages = imageFiles;
+  state.totalSlices = imageFiles.length;
+  state.slice = Math.floor(imageFiles.length / 2);
+  document.getElementById('sliceSlider').max = imageFiles.length - 1;
+  document.getElementById('sliceSlider').value = state.slice;
+  updateSliceNum();
+
+  // Add as custom series
+  SERIES.push({ name: 'Uploaded', plane: 'axial', slices: imageFiles.length, tr: '—', te: '—', thick: '—', label: 'UPLOAD' });
+  state.series = SERIES.length - 1;
+
+  // Preload images
+  state.imageCache = {};
+  imageFiles.forEach((f, i) => {
+    const url = URL.createObjectURL(f);
+    const img = new Image();
+    img.onload = () => { state.imageCache[i] = img; renderAll(); };
+    img.src = url;
+  });
+
+  buildSeriesList();
+  buildViews();
+}
+
+// Override render for uploaded images
+const _originalRender = renderAll;
+function renderAll() {
+  if (state.imageCache && SERIES[state.series]?.name === 'Uploaded') {
+    document.querySelectorAll('.view-canvas').forEach(canvas => {
+      resizeCanvas(canvas);
+      const ctx = canvas.getContext('2d');
+      const img = state.imageCache[state.slice];
+      if (img) {
+        ctx.fillStyle = '#000';
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+        const scale = Math.min(canvas.width / img.width, canvas.height / img.height);
+        const ox = (canvas.width - img.width * scale) / 2;
+        const oy = (canvas.height - img.height * scale) / 2;
+        ctx.drawImage(img, ox, oy, img.width * scale, img.height * scale);
       }
+    });
+    return;
+  }
+  document.querySelectorAll('.view-canvas').forEach(canvas => {
+    resizeCanvas(canvas);
+    const orient = canvas.dataset.orient;
+    const ser = +canvas.dataset.series;
+    const idx = +canvas.dataset.viewIdx;
+    drawMRISlice(canvas, state.slice, ser, state.ww, state.wl, orient);
+    const infoR = document.getElementById(`viewInfoR_${idx}`);
+    if (infoR) infoR.innerHTML = `Slice: ${state.slice+1}/${state.totalSlices}<br>${state.zoom.toFixed(1)}x`;
+  });
+}
 
-      const { questionText, answer } = generateQuestion();
-      correctAnswer = answer;
-      document.getElementById('question').textContent = questionText;
+// ═══════════════════════════════════════════════
+// KEYBOARD SHORTCUTS
+// ═══════════════════════════════════════════════
 
-      // Generate 3 wrong answers
-      const wrong = new Set();
-      while (wrong.size < 3) {
-        const w = answer + rand(-5, 5);
-        if (w !== answer && w >= 0) wrong.add(w);
-      }
+document.addEventListener('keydown', e => {
+  if (e.target.tagName === 'INPUT') return;
+  if (e.key === 'ArrowRight' || e.key === 'ArrowDown') stepSlice(1);
+  if (e.key === 'ArrowLeft'  || e.key === 'ArrowUp')   stepSlice(-1);
+});
 
-      const choices = shuffle([answer, ...wrong]);
-      const container = document.getElementById('answers');
-      container.innerHTML = '';
+// ═══════════════════════════════════════════════
+// INIT
+// ═══════════════════════════════════════════════
 
-      choices.forEach(choice => {
-        const btn = document.createElement('button');
-        btn.className = 'answer-btn';
-        btn.textContent = choice;
-        btn.onclick = () => handleAnswer(btn, choice);
-        container.appendChild(btn);
-      });
-    }
+window.addEventListener('resize', () => renderAll());
 
-    function handleAnswer(btn, choice) {
-      if (locked) return;
-      locked = true;
-
-      const allBtns = document.querySelectorAll('.answer-btn');
-
-      if (choice === correctAnswer) {
-        btn.classList.add('correct');
-        score += level === 'easy' ? 10 : level === 'medium' ? 20 : 30;
-        streak++;
-        document.getElementById('score').textContent = score;
-        document.getElementById('streak').textContent = streak;
-
-        const praise = ['Amazing! 🎉', 'Super! ⭐', 'You rock! 🚀', 'Wow! 🌈', 'Brilliant! 💡', 'Perfect! 🏆'];
-        const fb = document.getElementById('feedback');
-        fb.textContent = praise[rand(0, praise.length - 1)];
-        fb.className = 'feedback correct';
-
-        updateStars();
-        setTimeout(newQuestion, 1200);
-      } else {
-        btn.classList.add('wrong');
-        streak = 0;
-        document.getElementById('streak').textContent = 0;
-
-        // Show the correct answer
-        allBtns.forEach(b => {
-          if (parseInt(b.textContent) === correctAnswer) b.classList.add('correct');
-        });
-
-        const fb = document.getElementById('feedback');
-        fb.textContent = `The answer is ${correctAnswer}! Try again! 💪`;
-        fb.className = 'feedback wrong';
-
-        setTimeout(newQuestion, 1800);
-      }
-    }
-
-    function updateStars() {
-      const starsDiv = document.getElementById('stars');
-      const count = Math.min(Math.floor(score / 50), 10);
-      starsDiv.textContent = '⭐'.repeat(count);
-    }
-
-    newQuestion();
-
-    if ('serviceWorker' in navigator) {
-      navigator.serviceWorker.register('/sw.js');
-    }
-  </script>
+buildSeriesList();
+buildViews();
+document.getElementById('reportContent').innerHTML = REPORT_DATA.findings;
+</script>
 </body>
 </html>
